@@ -1,0 +1,3 @@
+pandas==0.25.1
+appJar==0.94.0
+plotly==4.1.0
