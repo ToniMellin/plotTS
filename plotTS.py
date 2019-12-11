@@ -4,6 +4,7 @@ from plotly.subplots import make_subplots
 import collections
 import logging
 
+#name the module logger
 pTS_logger = logging.getLogger(__name__)
 
 #convert input file to pandas dataframe
@@ -80,6 +81,7 @@ def plotEngine(fig, plotDict, X_axis, df):
                     mode=pMode,
                     name=pName),secondary_y=True,)
 
+#createFig creates a figure from the data and displays the figure
 def createFig(sec_y, plotDict, x_axis, df):
     #create figure
     fig = make_subplots(specs=[[{"secondary_y": sec_y}]])
@@ -88,6 +90,14 @@ def createFig(sec_y, plotDict, x_axis, df):
 
     fig.show()
 
+#saveFigAsHTML works the same as createFig, except it produces a HTML file with all the data plotted
+def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name):
+    #create figure
+    fig = make_subplots(specs=[[{"secondary_y": sec_y}]])
+
+    plotEngine(fig, plotDict, x_axis, df)
+
+    fig.write_html('{}.html'.format(HTML_name))
 
 if __name__ == "__main__":
     #TODO create example for the release version
