@@ -103,7 +103,6 @@ def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name):
     fig.write_html('{}.html'.format(HTML_name))
 
 if __name__ == "__main__":
-    #TODO create example for the release version
     #EXAMPLE: starting from creating a datafile to be opened
     #create a dataframe with 100 data point with integers ranging from 0 to 99, columns named as 'Apples', 'Bananas', 'Cucumbers', 'Dragonfruits'
     df_data = pd.DataFrame(np.random.randint(0, 100, size=(100, 4)), columns=list(['Apples', 'Bananas', 'Cucumbers', 'Dragonfruits']))
