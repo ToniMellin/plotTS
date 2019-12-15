@@ -124,7 +124,7 @@ if __name__ == "__main__":
     df = pd.concat([df_index, df_time, df_data], axis=1)                                                             
 
     #saving the dataframe as csv                    
-    df.to_csv(path_or_buf='exampledata.csv', date_format='%Y-%m-%dT%H:%M:%S', index=False)
+    df.to_csv(path_or_buf='exampledata.csv', index=False)
 
     #reading the input example file and generating a dataframe from it
     df_file = inputFiletoDF('exampledata.csv')
