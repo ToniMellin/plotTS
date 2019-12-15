@@ -5,7 +5,7 @@ import logging
 import plotTS as pTS
 from configparser import ConfigParser
 
-version = '1.0.2'
+version = '1.1.0'
 print("\nplotTS {}\n".format(version))
 
 
@@ -199,6 +199,7 @@ def convertTraceModeToID(trace_mode):
         trace_mode_id = 3
     return trace_mode_id
 
+#loading plot settings from UI to generate the plot
 def loadPlotSettings():
     #TODO converge all loading of settings to this one function to reduce the need of duplicating stuff in SaveAsHTML and remove unnecessary stuff from Plot and test
     ui.info('Retrieving plotting settings')
@@ -230,6 +231,8 @@ def loadPlotSettings():
             y2_keyList.extend(y2_items)
             for y2_item in y2_items:
                 y2_keyList.append('{}_avg={}'.format(y2_item, average_rollNum))
+            ui.info('Added y-axis average data keys: %s', y_keylist)
+            ui.info('Added y2-axis average data keys: %s', y2_keylist)
         else:
             averageMode = False
             y_keyList = ''
@@ -285,6 +288,7 @@ def press(btn):
             ui.queueFunction(ui.setLabel, 'output', 'ERROR plotting!!!')
             ui.queueFunction(ui.setLabelBg, 'output', 'red')
     elif btn == 'SaveAsHTML':
+        #similar to plot except save the output as html file
         #TODO test new SaveAsHTML functionality
         HTML_entry = ui.getEntry('HTML filename')
         ui.debug('HTML filename given: %s', HTML_entry)
