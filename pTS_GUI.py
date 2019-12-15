@@ -5,12 +5,12 @@ import logging
 import plotTS as pTS
 from configparser import ConfigParser
 
-version = '1.0.1'
+version = '1.1.0'
 print("\nplotTS {}\n".format(version))
 
 
 #GUI initialization part
-ui = gui("plotTS {}".format(version), "650x650") #, useTtk=True)
+ui = gui("plotTS {}".format(version), "650x700") #, useTtk=True)
 #ui.setTtkTheme('winnative')
 ui.increaseButtonFont()
 ui.setFont(12)
@@ -92,7 +92,6 @@ def checkIfPresetDataEmpty(presetSec):
         return True
     else:
         return False
-
 
 #load preset settings
 def loadPresetSettings(presetName):
@@ -199,6 +198,50 @@ def convertTraceModeToID(trace_mode):
         trace_mode_id = 3
     return trace_mode_id
 
+#loading plot settings from UI to generate the plot
+def loadPlotSettings():
+    ui.info('Retrieving plotting settings')
+    listBoxes = ui.getAllListBoxes()
+    try:
+        x_items = listBoxes['X-Axis']
+        ui.info('Plot X-Axis: %s', x_items)
+        y_items = listBoxes['Y-Axis']
+        ui.info('Plot Y-Axis: %s', y_items)
+        y2_items = listBoxes['Y2-Axis']
+        ui.info('Plot Y2-Axis: %s', y2_items)
+        if not y2_items: 
+            sec_y = False
+            ui.debug('NO Secondary axis items selected')
+        else:
+            sec_y = True
+            ui.debug('Secondary axis items selected') 
+        trace_mode = ui.getRadioButton('trace_mode')
+        trace_mode_id = convertTraceModeToID(trace_mode)
+        averageButton = ui.getRadioButton('average')
+        average_rollNum = ui.getSpinBox('average_rollNum')
+        if averageButton == 'On':
+            averageMode = True
+            y_keyList = []
+            y_keyList.extend(y_items)
+            for y_item in y_items:
+                y_keyList.append('{}_avg={}'.format(y_item, average_rollNum))
+            y2_keyList = []
+            y2_keyList.extend(y2_items)
+            for y2_item in y2_items:
+                y2_keyList.append('{}_avg={}'.format(y2_item, average_rollNum))
+            ui.info('Added y-axis average data keys: %s', y_keyList)
+            ui.info('Added y2-axis average data keys: %s', y2_keyList)
+        else:
+            averageMode = False
+            y_keyList = ''
+            y2_keyList = ''
+        return x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, trace_mode_id, averageMode, int(average_rollNum)
+    except Exception as e:
+        ui.critical('%s', e)
+        ui.error('ERROR!! Cannot retrieve settings for plotting!')
+        ui.queueFunction(ui.setLabel, 'output', 'ERROR retrieving settings')
+        ui.queueFunction(ui.setLabelBg, 'output', 'red')
+    
 #data drop function to set file location based on data drop
 def externalDrop(data):
     if data[0] == '{':
@@ -214,45 +257,12 @@ def press(btn):
     print(btn)
     if btn == 'Plot':
         #plot the data based on given datafile, axis options and settings
-        ui.info('Plotting that shit')
-        ui.queueFunction(ui.setLabel, 'output', 'Plotting figure...')
-        ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
-        listBoxes = ui.getAllListBoxes()
-        x_items = listBoxes['X-Axis']
-        ui.info('Plot X-Axis: %s', x_items)
-        y_items = listBoxes['Y-Axis']
-        ui.info('Plot Y-Axis: %s', y_items)
-        y2_items = listBoxes['Y2-Axis']
-        ui.info('Plot Y2-Axis: %s', y2_items)
-        trace_mode = ui.getRadioButton('trace_mode')
-        trace_mode_id = convertTraceModeToID(trace_mode)
-        averageButton = ui.getRadioButton('average')
-        if averageButton == 'On':
-            averageMode = True
-        else:
-            averageMode = False
-        average_rollNum = ui.getSpinBox('average_rollNum')
-        if not y2_items: 
-            sec_y = False
-            ui.debug('NO Secondary axis items selected')
-        else:
-            sec_y = True
-            ui.debug('Secondary axis items selected')
         try:
             ifile2 = ui.getEntry('file')
             df2 = pTS.inputFiletoDF(ifile2)
+            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, trace_mode_id, averageMode, average_Num = loadPlotSettings()
             if averageMode == True:
-                df2 = pTS.addAverageData(df2, y_items, y2_items, int(average_rollNum)) #add average curves with the function
-                #TODO add mechanism to add the new averaging data as plottable items (y_items, y2_items), otherwise they won't be plotted
-                #TODO add logging parts in the averaging function to debug issue
-                y_keyList = []
-                y_keyList.extend(y_items)
-                for y_item in y_items:
-                    y_keyList.append('{}_avg={}'.format(y_item, average_rollNum))
-                y2_keyList = []
-                y2_keyList.extend(y2_items)
-                for y2_item in y2_items:
-                    y2_keyList.append('{}_avg={}'.format(y2_item, average_rollNum))
+                df2 = pTS.addAverageData(df2, y_items, y2_items, average_Num) #add average curves with the function
                 try:
                     plotDict = pTS.createPlotDict(df2, y_keyList, y2_keyList, trace_mode_id)
                 except Exception as e:
@@ -271,8 +281,50 @@ def press(btn):
         except Exception as e:
             ui.critical('%s', e)
             ui.error("Issues with plotting")
-            ui.queueFunction(ui.setLabel, 'output', 'ERROR plotting that sh*t')
+            ui.queueFunction(ui.setLabel, 'output', 'ERROR plotting!!!')
             ui.queueFunction(ui.setLabelBg, 'output', 'red')
+    elif btn == 'SaveAsHTML':
+        #similar to plot except save the output as html file
+        HTML_entry = ui.getEntry('HTML filename')
+        ui.debug('HTML filename given: %s', HTML_entry)
+        if not HTML_entry:
+            ui.setFocus('HTML filename')
+            ui.queueFunction(ui.setLabel, 'output', 'Need filename to save as HTML...')
+            ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
+            return
+        else:
+            if HTML_entry.endswith('.html'):
+                HTML_split = HTML_entry.split('.')
+                HTML_name = HTML_split[0]
+            else:
+                HTML_name = HTML_entry     
+        try:
+            ifile2 = ui.getEntry('file')
+            df2 = pTS.inputFiletoDF(ifile2)
+            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, trace_mode_id, averageMode, average_Num = loadPlotSettings()
+            if averageMode == True:
+                df2 = pTS.addAverageData(df2, y_items, y2_items, average_Num) #add average curves with the function
+                try:
+                    plotDict = pTS.createPlotDict(df2, y_keyList, y2_keyList, trace_mode_id)
+                except Exception as e:
+                    ui.critical('%s', e)
+                    ui.error('ERROR!! Cannot create dictionary for plotting including the averaging!!!')
+            else:
+                try:
+                    plotDict = pTS.createPlotDict(df2, y_items, y2_items, trace_mode_id)
+                except Exception as e:
+                    ui.critical('%s', e)
+                    ui.error('ERROR!! Cannot create dictionary for plotting!!!')
+            pTS.saveFigAsHTML(sec_y, plotDict, df2[x_items[0]], df2, HTML_name)
+            ui.info('Saving figure as HTML completed!')
+            ui.info('Saved HTML filename:%s', HTML_name)
+            ui.queueFunction(ui.setLabel, 'output', 'Saving figure as HTML completed!')
+            ui.queueFunction(ui.setLabelBg, 'output', 'green')
+        except Exception as e:
+            ui.critical('%s', e)
+            ui.error("Issues with Saving as HTML file")
+            ui.queueFunction(ui.setLabel, 'output', 'ERROR saving as HTML!!!')
+            ui.queueFunction(ui.setLabelBg, 'output', 'red') 
     elif btn == "Load file":
         #load dropped or selected file and update axis listing
         ifile = ui.getEntry('file')
@@ -433,7 +485,7 @@ ui.stopTab() #End about tab
 ui.stopTabbedFrame() #END tabbing
 
 ##Bottom parts styling
-ui.startFrame('Bottom', row=2, column=0, colspan=3)
+ui.startFrame('Bottom', row=3, column=0, colspan=3)
 ui.setBg('ghost white')
 
 #importing presets OR creating default preset file if missing
@@ -546,12 +598,14 @@ ui.addLabelEntry("Preset Name")
 ui.stopFrame()
 ui.stopLabelFrame()
 
-#Plot command and output
+#Plot command, SaveAsHTML and output label
 ui.addButton('Plot', press)
+ui.addLabelEntry('HTML filename')
+ui.addButton('SaveAsHTML', press)
+
 ui.addLabel('output')
 ui.setLabel('output', "Ready - Waiting Command")
 ui.setLabelBg("output", "yellow")
 
 ui.stopFrame() #End bottoms part
-
 ui.go()

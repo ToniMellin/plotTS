@@ -1,9 +1,13 @@
 import pandas as pd
+import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import collections
 import logging
+from datetime import datetime
+from datetime import timedelta
 
+#name the module logger
 pTS_logger = logging.getLogger(__name__)
 
 #convert input file to pandas dataframe
@@ -80,6 +84,7 @@ def plotEngine(fig, plotDict, X_axis, df):
                     mode=pMode,
                     name=pName),secondary_y=True,)
 
+#createFig creates a figure from the data and displays the figure
 def createFig(sec_y, plotDict, x_axis, df):
     #create figure
     fig = make_subplots(specs=[[{"secondary_y": sec_y}]])
@@ -88,7 +93,52 @@ def createFig(sec_y, plotDict, x_axis, df):
 
     fig.show()
 
+#saveFigAsHTML works the same as createFig, except it produces a HTML file with all the data plotted
+def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name):
+    #create figure
+    fig = make_subplots(specs=[[{"secondary_y": sec_y}]])
+
+    plotEngine(fig, plotDict, x_axis, df)
+
+    fig.write_html('{}.html'.format(HTML_name))
 
 if __name__ == "__main__":
-    #TODO create example for the release version
-    print('Example missing :(')
+    #EXAMPLE: starting from creating a datafile to be opened
+    #create a dataframe with 100 data point with integers ranging from 0 to 99, columns named as 'Apples', 'Bananas', 'Cucumbers', 'Dragonfruits'
+    df_data = pd.DataFrame(np.random.randint(0, 100, size=(100, 4)), columns=list(['Apples', 'Bananas', 'Cucumbers', 'Dragonfruits']))
+
+    #creating a time list of 100 timestamps, incrementing by 25 minutes from '2019-12-01T00:00:00'
+    start_date = datetime.fromisoformat('2019-12-01T00:00:00')
+    timelist = []
+    for i in range(0, 100, 1):
+        timestamp = start_date + timedelta(minutes=25)*i
+        timelist.append(timestamp)
+
+    #setting time list to dataframe
+    df_time = pd.DataFrame(data=timelist, columns=['Time'])
+
+    #creating an index dataframe from 0 to 99
+    df_index = pd.DataFrame(np.arange(100), columns=['index'])
+
+    #combining the time and index dataframe to the created data, creating a new dataframe named df
+    df = pd.concat([df_index, df_time, df_data], axis=1)                                                             
+
+    #saving the dataframe as csv                    
+    df.to_csv(path_or_buf='exampledata.csv', index=False)
+
+    #reading the input example file and generating a dataframe from it
+    df_file = inputFiletoDF('exampledata.csv')
+
+    #adding rolling averagedata from 5 points to Cucumbers and Dragonfruits
+    df_file_with_averages = addAverageData(df_file, ['Cucumbers'], ['Dragonfruits'], 5)
+
+    #creating a plot Dictionary to be used in plotting
+    #essentially this dictates how we want the plot to be formed
+    #what items in y axis, y2 axis and what trace type
+    plotDictionary = createPlotDict(df_file_with_averages, ['Apples', 'Bananas', 'Cucumbers', 'Cucumbers_avg=5'], ['Dragonfruits', 'Dragonfruits_avg=5'], 2)
+
+    #creating the figure and plotting the data by using the 'Time' as x-axis
+    createFig(True, plotDictionary, df_file_with_averages['Time'], df_file_with_averages)
+
+    #saving the figure as html by using the 'index' as x-axis
+    saveFigAsHTML(True, plotDictionary, df_file_with_averages['index'], df_file_with_averages, 'save_example')
