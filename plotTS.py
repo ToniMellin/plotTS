@@ -129,11 +129,9 @@ if __name__ == "__main__":
     #reading the input example file and generating a dataframe from it
     df_file = inputFiletoDF('exampledata.csv')
 
-    print(df_file)
     #adding rolling averagedata from 5 points to Cucumbers and Dragonfruits
     df_file_with_averages = addAverageData(df_file, ['Cucumbers'], ['Dragonfruits'], 5)
 
-    print(df_file_with_averages)
     #creating a plot Dictionary to be used in plotting
     #essentially this dictates how we want the plot to be formed
     #what items in y axis, y2 axis and what trace type
