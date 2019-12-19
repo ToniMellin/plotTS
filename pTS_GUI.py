@@ -5,7 +5,7 @@ import logging
 import plotTS as pTS
 from configparser import ConfigParser
 
-version = '1.1.0'
+version = '1.2.0'
 print("\nplotTS {}\n".format(version))
 
 
@@ -251,6 +251,7 @@ def externalDrop(data):
     ui.info('Data drop used: %s', ofile)
     ui.setEntry('file', ofile, callFunction=True)
 
+#TODO create and test functionality to make the time conversion when plotting and saving as html
 #button press actions
 def press(btn):
     ui.info('User pressed %s', btn)
@@ -430,47 +431,53 @@ ui.stopTab() #End General Tab
 
 ##Settings TAB
 ui.startTab("Settings")
+#Time convert settings
+ui.startLabelFrame('Convert Time x-axis to datetime object (strptime)') 
+ui.startFrame('TimeConvert_1', row=0, column=0, colspan=1)
+ui.addRadioButton("timeconvert", "On")
+ui.stopFrame()
+ui.startFrame('TimeConvert_2', row=0, column=1, colspan=1)
+ui.addRadioButton("timeconvert", "Off")
+ui.setRadioButton("timeconvert", "Off", callFunction=True)
+ui.stopFrame()
+ui.startFrame('TimeConvert_3', row=0, column=2, colspan=1)
+ui.addLabelEntry('Time format:')
+ui.setEntry('Time format:', '%Y-%m-%d %H:%M:%S', callFunction=True)
+ui.stopFrame()
+ui.startFrame('TimeConvert_4', row=1, column=0, colspan=3)
+ui.addLabel("TimeConvert_Tip", "*Tip: check python datetime library documentation on strptime format")
+ui.stopFrame()
+ui.stopLabelFrame()
 #trace mode settings
 ui.startLabelFrame('Graph trace mode') 
-ui.startFrame('Trace_M_1', row=0, column=0, colspan=1)
+ui.startFrame('Trace_M_1', row=2, column=0, colspan=1)
 ui.addRadioButton("trace_mode", "Lines+Markers")
 ui.stopFrame()
-ui.startFrame('Trace_M_2', row=0, column=1, colspan=1)
+ui.startFrame('Trace_M_2', row=2, column=1, colspan=1)
 ui.addRadioButton("trace_mode", "Lines")
 ui.stopFrame()
-ui.startFrame('Trace_M_3', row=0, column=2, colspan=1)
+ui.startFrame('Trace_M_3', row=2, column=2, colspan=1)
 ui.addRadioButton("trace_mode", "Markers")
 ui.stopFrame()
 ui.stopLabelFrame()
 #rolling average settings
 ui.startLabelFrame('Add Averaging Curves (rolling average)')
-ui.startFrame('Average_1', row=1, column=0, colspan=1)
+ui.startFrame('Average_1', row=3, column=0, colspan=1)
 ui.addRadioButton("average", "On")
 ui.stopFrame()
-ui.startFrame('Average_2', row=1, column=1, colspan=1)
+ui.startFrame('Average_2', row=3, column=1, colspan=1)
 ui.addRadioButton("average", "Off")
 ui.setRadioButton("average", "Off", callFunction=True)
 ui.stopFrame()
-ui.startFrame('Average_3', row=1, column=2, colspan=1)
+ui.startFrame('Average_3', row=3, column=2, colspan=1)
 ui.addLabel("Average_spin", "Averaging points:")
 ui.stopFrame()
-ui.startFrame('Average_4', row=1, column=3, colspan=1)
+ui.startFrame('Average_4', row=3, column=3, colspan=1)
 ui.addSpinBoxRange("average_rollNum", 1, 50)
 ui.stopFrame()
 ui.stopLabelFrame()
-#empty settings Frames for future use and make the other settings neater
-ui.startFrame('Empty_Settings_6', row=2, column=0, colspan=1)
-ui.stopFrame()
-ui.startFrame('Empty_Settings_5', row=3, column=0, colspan=1)
-ui.stopFrame()
-ui.startFrame('Empty_Settings_4', row=4, column=0, colspan=1)
-ui.stopFrame()
-ui.startFrame('Empty_Settings_3', row=5, column=0, colspan=1)
-ui.stopFrame()
-ui.startFrame('Empty_Settings_2', row=6, column=0, colspan=1)
-ui.stopFrame()
-ui.startFrame('Empty_Settings_1', row=7, column=0, colspan=1)
-ui.stopFrame()
+#empty label that squishes the settings above more together
+ui.addLabel('Emptylabel', '\n\n\n\n\n\n', row=4, colspan=3, rowspan=5)
 ui.stopTab() #End settings tab
 
 ##About TAB

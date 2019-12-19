@@ -21,6 +21,15 @@ def inputFiletoDF(inputFile):
 
     return df
 
+#TODO create and test the correction functionality for time x-axis values
+def correctTimeValues(df, X_axis, datetime_format):
+    try:
+        df[X_axis] = df[X_axis].apply(lambda x: datetime.strptime(x, datetime_format))
+        return df
+    except Exception as e:
+        pTS_logger.critical('%s', e)
+        pTS_logger.exception('datetime_format is incorrect')
+    
 #add averaging data for selected items
 def addAverageData(df, y_List, y2_List, average_rollNum):
     #join lists y_items and y2_items as y_joined
@@ -117,7 +126,7 @@ if __name__ == "__main__":
     #setting time list to dataframe
     df_time = pd.DataFrame(data=timelist, columns=['Time'])
 
-    #creating an index dataframe from 0 to 99
+    #creating an index to the dataframe from 0 to 99
     df_index = pd.DataFrame(np.arange(100), columns=['index'])
 
     #combining the time and index dataframe to the created data, creating a new dataframe named df
@@ -129,8 +138,12 @@ if __name__ == "__main__":
     #reading the input example file and generating a dataframe from it
     df_file = inputFiletoDF('exampledata.csv')
 
+    #correcting the Time data to the imported dateframe to datetime object based on given format
+    datetime_format = '%Y-%m-%d %H:%M:%S'
+    df_file_with_time_corrected = correctTimeValues(df_file, 'Time', datetime_format)
+
     #adding rolling averagedata from 5 points to Cucumbers and Dragonfruits
-    df_file_with_averages = addAverageData(df_file, ['Cucumbers'], ['Dragonfruits'], 5)
+    df_file_with_averages = addAverageData(df_file_with_time_corrected, ['Cucumbers'], ['Dragonfruits'], 5)
 
     #creating a plot Dictionary to be used in plotting
     #essentially this dictates how we want the plot to be formed
