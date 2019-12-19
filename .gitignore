@@ -1,3 +1,8 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+#plotTS created
 debug.log
 presets.ini
 exampledata.csv
