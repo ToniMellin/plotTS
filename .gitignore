@@ -7,3 +7,7 @@ debug.log
 presets.ini
 exampledata.csv
 save_example.html
+
+#development files
+plotTS_development.ipynb
+testdata.csv

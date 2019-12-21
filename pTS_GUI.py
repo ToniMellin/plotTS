@@ -279,8 +279,7 @@ def externalDrop(data):
 #TODO create and test functionality to make the time conversion when plotting and saving as html
 #button press actions
 def press(btn):
-    ui.info('User pressed %s', btn)
-    print(btn)
+    ui.info('User pressed --> %s', btn)
     if btn == 'Plot':
         #plot the data based on given datafile, axis options and settings
         try:
@@ -419,10 +418,10 @@ def press(btn):
         ui.setButton('Debug', 'Debug ON')
         ui.queueFunction(ui.setLabel, 'output', 'Debug ON')
         ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
-        #ui.setLogFile('debug.log') #the activation by appJar function
-        logging.basicConfig(stream=sys.stdout, filename='debug.log', filemode='w', level=logging.DEBUG)
-        logger = logging.getLogger("appJar")
-        logger.info('debug.log creation activated')
+        ui.setLogFile('debug.log') #the activation by appJar function
+        #logging.basicConfig(stream=sys.stdout, filename='C:\\PyScripts\\GIT\\plotTS\\debug.log', filemode='w', level=logging.DEBUG)
+        #logger = logging.getLogger("appJar")
+        #logger.info('debug.log creation activated')
         ui.info('plotTS %s', version)
 
 

@@ -10,17 +10,21 @@ from datetime import timedelta
 
 #name the module logger
 pTS_logger = logging.getLogger(__name__)
+pTS_logger.setLevel(logging.DEBUG)
 
 #convert input file to pandas dataframe
 def inputFiletoDF(inputFile):
-    if inputFile.endswith('.csv') == True:
-        df = pd.read_csv(inputFile) #, encoding = "utf8"
-    elif inputFile.endswith('.xlsx') == True:
-        df = pd.read_excel(inputFile) #, encoding = "utf8"
-    else:
-        pTS_logger.error('Invalid file format')
-
-    return df
+    try:
+        if inputFile.endswith('.csv') == True:
+            df = pd.read_csv(inputFile) #, encoding = "utf8"
+        elif inputFile.endswith('.xlsx') == True:
+            df = pd.read_excel(inputFile) #, encoding = "utf8"
+        else:
+            pTS_logger.error('Invalid file format: %s', inputFile)
+        return df
+    except Exception as e:
+        pTS_logger.critical('%s', e)
+        pTS_logger.exception('Invalid file format: %s', inputFile)
 
 #TODO create and test the correction functionality for time x-axis values
 def correctTimeValues(df, X_axis, datetime_format):
