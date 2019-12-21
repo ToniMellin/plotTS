@@ -29,6 +29,16 @@ def correctTimeValues(df, X_axis, datetime_format):
     except Exception as e:
         pTS_logger.critical('%s', e)
         pTS_logger.exception('datetime_format is incorrect')
+
+#TODO add the time conversion automatic try function
+def autoCorrectTimeValues(df, X_axis):
+    #TODO regex inspection on time formats
+    try:
+        df[X_axis] = df[X_axis].apply(lambda x: datetime.strptime(x, datetime_format))
+        return df
+    except Exception as e:
+        pTS_logger.critical('%s', e)
+        pTS_logger.exception('datetime_format is incorrect')
     
 #add averaging data for selected items
 def addAverageData(df, y_List, y2_List, average_rollNum):

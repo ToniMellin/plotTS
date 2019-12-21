@@ -32,6 +32,7 @@ def findPresetID(name):
     ui.queueFunction(ui.setLabelBg, 'output', 'red')
     return False
 
+#TODO add the time conversion presets saving
 #collect and change preset values in config and then save the presets to preset.ini
 def changePresetValues(oldName, newName):
     preset_id = int(findPresetID(oldName))
@@ -93,6 +94,7 @@ def checkIfPresetDataEmpty(presetSec):
     else:
         return False
 
+#TODO add the time conversion presets loading
 #load preset settings
 def loadPresetSettings(presetName):
     preset_id = int(findPresetID(presetName))
@@ -432,24 +434,29 @@ ui.stopTab() #End General Tab
 ##Settings TAB
 ui.startTab("Settings")
 #Time convert settings
-ui.startLabelFrame('Convert Time x-axis to datetime object (strptime)') 
-ui.startFrame('TimeConvert_1', row=0, column=0, colspan=1)
-ui.addRadioButton("timeconvert", "On")
+ui.startLabelFrame('Convert time x-axis to datetime object (strptime)')
+ui.startFrame('TimeConvert_1', row=0, column=0)
+ui.addRadioButton("timeconvert", "Auto")
+ui.stopFrame() 
+ui.startFrame('TimeConvert_2', row=0, column=1)
+ui.addRadioButton("timeconvert", "Manual")
 ui.stopFrame()
-ui.startFrame('TimeConvert_2', row=0, column=1, colspan=1)
+ui.startFrame('TimeConvert_3', row=0, column=2)
 ui.addRadioButton("timeconvert", "Off")
 ui.setRadioButton("timeconvert", "Off", callFunction=True)
 ui.stopFrame()
-ui.startFrame('TimeConvert_3', row=0, column=2, colspan=1)
+ui.startFrame('TimeConvert_4', row=0, column=3, colspan=4)
+ui.stretch = "column"
+ui.sticky = "ew" 
 ui.addLabelEntry('Time format:')
 ui.setEntry('Time format:', '%Y-%m-%d %H:%M:%S', callFunction=True)
 ui.stopFrame()
-ui.startFrame('TimeConvert_4', row=1, column=0, colspan=3)
+ui.startFrame('TimeConvert2_1', row=1, column=0, colspan=5)
 ui.addLabel("TimeConvert_Tip", "*Tip: check python datetime library documentation on strptime format")
 ui.stopFrame()
 ui.stopLabelFrame()
 #trace mode settings
-ui.startLabelFrame('Graph trace mode') 
+ui.startLabelFrame('Plot trace mode') 
 ui.startFrame('Trace_M_1', row=2, column=0, colspan=1)
 ui.addRadioButton("trace_mode", "Lines+Markers")
 ui.stopFrame()
@@ -473,7 +480,7 @@ ui.startFrame('Average_3', row=3, column=2, colspan=1)
 ui.addLabel("Average_spin", "Averaging points:")
 ui.stopFrame()
 ui.startFrame('Average_4', row=3, column=3, colspan=1)
-ui.addSpinBoxRange("average_rollNum", 1, 50)
+ui.addSpinBoxRange("average_rollNum", 1, 100)
 ui.stopFrame()
 ui.stopLabelFrame()
 #empty label that squishes the settings above more together
@@ -516,6 +523,7 @@ if path.exists('presets.ini') == True:
         ui.queueFunction(ui.setLabel, 'output', 'ERROR presets loading failed!!! Possible that presets.ini corrupted!!!')
         ui.queueFunction(ui.setLabelBg, 'output', 'red')
 #create new presets.ini config file as it did not exist
+#TODO add the time conversion presets into the file
 else:
     ui.warn('presets.ini not available')
     config['preset1'] = {
