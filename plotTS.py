@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import collections
 import logging
+import sys
 from datetime import datetime
 from datetime import timedelta
 
@@ -105,6 +106,10 @@ def plotEngine(fig, plotDict, X_axis, df):
 
 #createFig creates a figure from the data and displays the figure
 def createFig(sec_y, plotDict, x_axis, df):
+    #debug messages before plotting
+    pTS_logger.debug('plotting dataframe...')
+    pTS_logger.debug('dataframe dtypes: \n%s', df.dtypes)
+
     #create figure
     fig = make_subplots(specs=[[{"secondary_y": sec_y}]])
 
@@ -114,6 +119,10 @@ def createFig(sec_y, plotDict, x_axis, df):
 
 #saveFigAsHTML works the same as createFig, except it produces a HTML file with all the data plotted
 def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name):
+    #debug messages before plotting
+    pTS_logger.debug('plotting dataframe...')
+    pTS_logger.debug('dataframe dtypes: \n%s', df.dtypes)
+
     #create figure
     fig = make_subplots(specs=[[{"secondary_y": sec_y}]])
 
@@ -122,6 +131,9 @@ def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name):
     fig.write_html('{}.html'.format(HTML_name))
 
 if __name__ == "__main__":
+    #enable logging
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
     #EXAMPLE: starting from creating a datafile to be opened
     #create a dataframe with 100 data point with integers ranging from 0 to 99, columns named as 'Apples', 'Bananas', 'Cucumbers', 'Dragonfruits'
     df_data = pd.DataFrame(np.random.randint(0, 100, size=(100, 4)), columns=list(['Apples', 'Bananas', 'Cucumbers', 'Dragonfruits']))

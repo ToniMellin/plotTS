@@ -2,12 +2,15 @@ from appJar import gui
 import os
 from os import path
 import logging
+import sys
 import plotTS as pTS
 from configparser import ConfigParser
 
 version = '1.2.0'
 print("\nplotTS {}\n".format(version))
 
+#logging configuration
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 #GUI initialization part
 ui = gui("plotTS {}".format(version), "650x700") #, useTtk=True)
@@ -32,7 +35,7 @@ def findPresetID(name):
     ui.queueFunction(ui.setLabelBg, 'output', 'red')
     return False
 
-#TODO add the time conversion presets saving
+#TODO test the time conversion presets saving
 #collect and change preset values in config and then save the presets to preset.ini
 def changePresetValues(oldName, newName):
     preset_id = int(findPresetID(oldName))
@@ -48,6 +51,14 @@ def changePresetValues(oldName, newName):
         config.set(presetSec, 'y_axis', ','.join(y_items))
         y2_items = listBoxes['Y2-Axis']
         config.set(presetSec, 'y2_axis', ','.join(y2_items))
+        #load timeconvert settings
+        timeconvert_mode = ui.getRadioButton('timeconvert')
+        config.set(presetSec, 'timeconvert_mode', timeconvert_mode)
+        ui.debug('timeconvert_mode: %s', timeconvert_mode)
+        timeconvert_format =  ui.getEntry('Time format:')
+        config.set(presetSec, 'timeconvert_format', timeconvert_format)
+        ui.debug('timeconvert_format: %s', timeconvert_format)
+        #Trace settings
         trace_mode = ui.getRadioButton('trace_mode')
         trace_mode_id = convertTraceModeToID(trace_mode)
         trace_conf = str(trace_mode_id)
@@ -62,11 +73,13 @@ def changePresetValues(oldName, newName):
         writeToConfig() #save config
         #change UI preset naming
         ui.renameOptionBoxItem('Preset:', oldName, newName, callFunction=False)
-        
+        #add info of changes
         ui.info('Preset %(pres)s name changed to -> %(name)s', {'pres': presetSec, 'name': newName})
         ui.info('Preset %(pres)s x-axis changed to -> %(axisInfo)s', {'pres': presetSec, 'axisInfo': x_items})
         ui.info('Preset %(pres)s y-axis changed to -> %(axisInfo)s', {'pres': presetSec, 'axisInfo': y_items})
         ui.info('Preset %(pres)s y2-axis changed to -> %(axisInfo)s', {'pres': presetSec, 'axisInfo': y2_items})
+        ui.info('Preset %(pres)s timeconvert_mode changed to -> %(time_mode)s', {'pres': presetSec, 'time_mode': timeconvert_mode})
+        ui.info('Preset %(pres)s timeconvert_format changed to -> %(time_format)s', {'pres': presetSec, 'time_format': timeconvert_format})
         ui.info('Preset %(pres)s markers changed to -> %(traceInfo)s', {'pres': presetSec, 'traceInfo': trace_mode})
         ui.info('Preset %(pres)s average mode changed to -> %(averageInfo)s', {'pres': presetSec, 'averageInfo': averageButton})
         ui.info('Preset %(pres)s average rolling number changed to -> %(avgRollInfo)s', {'pres': presetSec, 'avgRollInfo': average_rollNum})
@@ -143,8 +156,8 @@ def loadPresetSettings(presetName):
         ui.queueFunction(ui.setLabel, 'output', 'Preset {} does not match file!!!'.format(presetName))
         ui.queueFunction(ui.setLabelBg, 'output', 'red')
     else:
-        #change axis options to UI
         try:
+            #change axis options to UI
             ui.deselectAllListItems('X-Axis', callFunction=False)
             for item in x_itemsList:
                 ui.selectListItem('X-Axis', item, callFunction=True)
@@ -157,6 +170,13 @@ def loadPresetSettings(presetName):
             for item in y2_itemsList:
                 ui.selectListItem('Y2-Axis', item, callFunction=True)
                 ui.debug('selected %s in Y2-Axis', item)
+            #load time conversion settings
+            timeconvert_mode_Set = config[presetSec].get('timeconvert_mode')
+            ui.setRadioButton("timeconvert", timeconvert_mode_Set, callFunction=True)
+            ui.debug('set timeconvert_mode as %s', timeconvert_mode_Set)
+            timeconvert_format_Set = config[presetSec].get('timeconvert_format')
+            ui.setEntry("Time format:", timeconvert_format_Set, callFunction=True)
+            ui.debug('set timeconvert_format as %s', timeconvert_format_Set)
             #load and set marker settings
             markerSet = config[presetSec].get('marker_trace')
             if markerSet == '1':
@@ -200,6 +220,7 @@ def convertTraceModeToID(trace_mode):
         trace_mode_id = 3
     return trace_mode_id
 
+#TODO add the loading of time format settings
 #loading plot settings from UI to generate the plot
 def loadPlotSettings():
     ui.info('Retrieving plotting settings')
@@ -216,7 +237,9 @@ def loadPlotSettings():
             ui.debug('NO Secondary axis items selected')
         else:
             sec_y = True
-            ui.debug('Secondary axis items selected') 
+            ui.debug('Secondary axis items selected')
+        timeconvert_mode = ui.getRadioButton('timeconvert')
+        timeconvert_format =  ui.getEntry('Time format:')
         trace_mode = ui.getRadioButton('trace_mode')
         trace_mode_id = convertTraceModeToID(trace_mode)
         averageButton = ui.getRadioButton('average')
@@ -237,7 +260,7 @@ def loadPlotSettings():
             averageMode = False
             y_keyList = ''
             y2_keyList = ''
-        return x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, trace_mode_id, averageMode, int(average_rollNum)
+        return x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, timeconvert_mode, timeconvert_format, trace_mode_id, averageMode, int(average_rollNum)
     except Exception as e:
         ui.critical('%s', e)
         ui.error('ERROR!! Cannot retrieve settings for plotting!')
@@ -262,8 +285,14 @@ def press(btn):
         #plot the data based on given datafile, axis options and settings
         try:
             ifile2 = ui.getEntry('file')
-            df2 = pTS.inputFiletoDF(ifile2)
-            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, trace_mode_id, averageMode, average_Num = loadPlotSettings()
+            df_inputfile = pTS.inputFiletoDF(ifile2)
+            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num = loadPlotSettings()
+            if time_mode == 'Auto':
+                df2 = pTS.autoCorrectTimeValues(df_inputfile, x_items[0])
+            if time_mode == 'Manual':
+                df2 = pTS.correctTimeValues(df_inputfile, x_items[0], time_format)
+            else:
+                df2 = df_inputfile
             if averageMode == True:
                 df2 = pTS.addAverageData(df2, y_items, y2_items, average_Num) #add average curves with the function
                 try:
@@ -303,8 +332,14 @@ def press(btn):
                 HTML_name = HTML_entry     
         try:
             ifile2 = ui.getEntry('file')
-            df2 = pTS.inputFiletoDF(ifile2)
-            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, trace_mode_id, averageMode, average_Num = loadPlotSettings()
+            df_inputfile = pTS.inputFiletoDF(ifile2)
+            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num = loadPlotSettings()
+            if time_mode == 'Auto':
+                df2 = pTS.autoCorrectTimeValues(df_inputfile, x_items[0])
+            if time_mode == 'Manual':
+                df2 = pTS.correctTimeValues(df_inputfile, x_items[0], time_format)
+            else:
+                df2 = df_inputfile
             if averageMode == True:
                 df2 = pTS.addAverageData(df2, y_items, y2_items, average_Num) #add average curves with the function
                 try:
@@ -384,8 +419,10 @@ def press(btn):
         ui.setButton('Debug', 'Debug ON')
         ui.queueFunction(ui.setLabel, 'output', 'Debug ON')
         ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
-        ui.setLogFile('debug.log') #the activation by appJar function
-        ui.info('debug.log creation activated')
+        #ui.setLogFile('debug.log') #the activation by appJar function
+        logging.basicConfig(stream=sys.stdout, filename='debug.log', filemode='w', level=logging.DEBUG)
+        logger = logging.getLogger("appJar")
+        logger.info('debug.log creation activated')
         ui.info('plotTS %s', version)
 
 
@@ -523,7 +560,6 @@ if path.exists('presets.ini') == True:
         ui.queueFunction(ui.setLabel, 'output', 'ERROR presets loading failed!!! Possible that presets.ini corrupted!!!')
         ui.queueFunction(ui.setLabelBg, 'output', 'red')
 #create new presets.ini config file as it did not exist
-#TODO add the time conversion presets into the file
 else:
     ui.warn('presets.ini not available')
     config['preset1'] = {
@@ -532,6 +568,8 @@ else:
         'x_axis': '',
         'y_axis': '',
         'y2_axis': '',
+        'timeconvert_mode': '',
+        'timeconvert_format': '',
         'marker_trace': '',
         'avg_on': '',
         'avg_rollnum': ''
@@ -542,6 +580,8 @@ else:
         'x_axis': '',
         'y_axis': '',
         'y2_axis': '',
+        'timeconvert_mode': '',
+        'timeconvert_format': '',
         'marker_trace': '',
         'avg_on': '',
         'avg_rollnum': ''
@@ -552,6 +592,8 @@ else:
         'x_axis': '',
         'y_axis': '',
         'y2_axis': '',
+        'timeconvert_mode': '',
+        'timeconvert_format': '',
         'marker_trace': '',
         'avg_on': '',
         'avg_rollnum': ''
@@ -562,6 +604,8 @@ else:
         'x_axis': '',
         'y_axis': '',
         'y2_axis': '',
+        'timeconvert_mode': '',
+        'timeconvert_format': '',
         'marker_trace': '',
         'avg_on': '',
         'avg_rollnum': ''
@@ -572,6 +616,8 @@ else:
        'x_axis': '',
         'y_axis': '',
         'y2_axis': '',
+        'timeconvert_mode': '',
+        'timeconvert_format': '',
         'marker_trace': '',
         'avg_on': '',
         'avg_rollnum': ''
@@ -582,6 +628,8 @@ else:
         'x_axis': '',
         'y_axis': '',
         'y2_axis': '',
+        'timeconvert_mode': '',
+        'timeconvert_format': '',
         'marker_trace': '',
         'avg_on': '',
         'avg_rollnum': ''
