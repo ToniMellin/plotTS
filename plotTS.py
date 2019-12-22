@@ -27,7 +27,7 @@ def inputFiletoDF(inputFile):
         pTS_logger.critical('%s', e)
         pTS_logger.exception('Invalid file format: %s', inputFile)
 
-#TODO create and test the correction functionality for time x-axis values
+#converts given dataframes X_axis column timestamps to datetime as per datetime_format
 def convertTimeValues(df, X_axis, datetime_format):
     try:
         df[X_axis] = df[X_axis].apply(lambda x: datetime.strptime(x, datetime_format))
@@ -36,6 +36,7 @@ def convertTimeValues(df, X_axis, datetime_format):
         pTS_logger.critical('%s', e)
         pTS_logger.exception('datetime_format is incorrect')
 
+#converts non date timestamps to timedelta values
 def convertNonDateTimeValues(timestamp):
         non24_td_list = re.split(r'(\d{1,3})(:)(\d\d)(:)?(\d\d)?(\W)?(\d{1,3})?', timestamp)
         if non24_td_list[0] == '':
@@ -53,9 +54,8 @@ def convertNonDateTimeValues(timestamp):
         else:
             raise ValueError('Timestamp regex result first group is not empty')
 
-#TODO add the time conversion automatic try function
+#automatic time conversion for given dataframe and X_axis column
 def autoConvertTimeValues(df, X_axis):
-    #TODO regex inspection on time formats
     AUTO_TIME_FORMATS =[    '%Y-%m-%d %H:%M%S',
                             '%Y-%m-%dT%H:%M:%S',
                             '%Y-%m-%dT%H:%M:%SZ',
@@ -77,13 +77,9 @@ def autoConvertTimeValues(df, X_axis):
             pTS_logger.info('Auto timestamp convert found matching format: %s', format)
             df_datetime_autoconverted = convertTimeValues(df, X_axis, format)
             return df_datetime_autoconverted
-        except ValueError as v:
-            #pTS_logger.critical('%s', v)
+        except ValueError:
             pTS_logger.exception('time format %s is not a match', format)
             pass
-        #except Exception as e:
-            #pTS_logger.critical('%s', e)
-            #pTS_logger.exception('time format issue: %s', format)
     try:
         convertNonDateTimeValues(df[X_axis][0])
         df[X_axis] = df[X_axis].apply(lambda x: convertNonDateTimeValues(x))
@@ -187,6 +183,7 @@ if __name__ == "__main__":
     #enable logging
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
+    #TODO better data example possibly another time option
     #EXAMPLE: starting from creating a datafile to be opened
     #create a dataframe with 100 data point with integers ranging from 0 to 99, columns named as 'Apples', 'Bananas', 'Cucumbers', 'Dragonfruits'
     df_data = pd.DataFrame(np.random.randint(0, 100, size=(100, 4)), columns=list(['Apples', 'Bananas', 'Cucumbers', 'Dragonfruits']))

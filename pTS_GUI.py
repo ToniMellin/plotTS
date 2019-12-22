@@ -35,7 +35,6 @@ def findPresetID(name):
     ui.queueFunction(ui.setLabelBg, 'output', 'red')
     return False
 
-#TODO test the time conversion presets saving
 #collect and change preset values in config and then save the presets to preset.ini
 def changePresetValues(oldName, newName):
     preset_id = int(findPresetID(oldName))
@@ -107,7 +106,6 @@ def checkIfPresetDataEmpty(presetSec):
     else:
         return False
 
-#TODO add the time conversion presets loading
 #load preset settings
 def loadPresetSettings(presetName):
     preset_id = int(findPresetID(presetName))
@@ -134,7 +132,6 @@ def loadPresetSettings(presetName):
     y2Count = 0
     for x_item in x_itemsList:
         for item in listItems:
-            #ui.debug('is %(x_i)s equal to %(XA_i)s', {'x_i': x_item, 'XA_i': item})
             if x_item == item:
                 xCount+=1
     for y_item in y_itemsList:
@@ -276,7 +273,6 @@ def externalDrop(data):
     ui.info('Data drop used: %s', ofile)
     ui.setEntry('file', ofile, callFunction=True)
 
-#TODO create and test functionality to make the time conversion when plotting and saving as html
 #button press actions
 def press(btn):
     ui.info('User pressed --> %s', btn)
@@ -448,7 +444,7 @@ def press(btn):
         #logger.info('debug.log creation activated')
         ui.info('plotTS %s', version)
 
-
+#UI START
 ##General TAB and TAB start      
 ui.startTabbedFrame("TabbedFrame")
 ui.startTab("General")
