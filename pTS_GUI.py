@@ -287,9 +287,19 @@ def press(btn):
             df_inputfile = pTS.inputFiletoDF(ifile2)
             x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num = loadPlotSettings()
             if time_mode == 'Auto':
-                df2 = pTS.autoCorrectTimeValues(df_inputfile, x_items[0])
+                try:
+                    df2 = pTS.autoConvertTimeValues(df_inputfile, x_items[0])
+                except Exception as e:
+                    ui.critical('%s', e)
+                    ui.error('ERROR!! Auto Correction for timestamps not possible!!!')
+                    raise ValueError('Could not convert timestamp automatically!!')
             if time_mode == 'Manual':
-                df2 = pTS.correctTimeValues(df_inputfile, x_items[0], time_format)
+                try:
+                    df2 = pTS.convertTimeValues(df_inputfile, x_items[0], time_format)
+                except Exception as e:
+                    ui.critical('%s', e)
+                    ui.error('ERROR!! Manual Correction for timestamps not possible!!!')
+                    raise ValueError('Could not convert timestamp automatically!!')
             else:
                 df2 = df_inputfile
             if averageMode == True:
@@ -309,6 +319,10 @@ def press(btn):
             ui.info('Plotting figure completed!')
             ui.queueFunction(ui.setLabel, 'output', 'Plotting figure completed!')
             ui.queueFunction(ui.setLabelBg, 'output', 'green')
+        except ValueError:
+            ui.error("Could not timeconvert time X-Axis for plotting!")
+            ui.queueFunction(ui.setLabel, 'output', 'Could not convert timestamps of X-Axis for plotting!')
+            ui.queueFunction(ui.setLabelBg, 'output', 'red')
         except Exception as e:
             ui.critical('%s', e)
             ui.error("Issues with plotting")
@@ -334,9 +348,19 @@ def press(btn):
             df_inputfile = pTS.inputFiletoDF(ifile2)
             x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num = loadPlotSettings()
             if time_mode == 'Auto':
-                df2 = pTS.autoCorrectTimeValues(df_inputfile, x_items[0])
+                try:
+                    df2 = pTS.autoConvertTimeValues(df_inputfile, x_items[0])
+                except Exception as e:
+                    ui.critical('%s', e)
+                    ui.error('ERROR!! Auto Correction for timestamps not possible!!!')
+                    raise Exception('%s', e)
             if time_mode == 'Manual':
-                df2 = pTS.correctTimeValues(df_inputfile, x_items[0], time_format)
+                try:
+                    df2 = pTS.convertTimeValues(df_inputfile, x_items[0], time_format)
+                except Exception as e:
+                    ui.critical('%s', e)
+                    ui.error('ERROR!! Manual Correction for timestamps not possible!!!')
+                    raise Exception('%s', e)
             else:
                 df2 = df_inputfile
             if averageMode == True:
@@ -539,7 +563,7 @@ ui.startFrame('Bottom', row=3, column=0, colspan=3)
 ui.setBg('ghost white')
 
 #importing presets OR creating default preset file if missing
-config = ConfigParser()
+config = ConfigParser(strict=False, interpolation=None)#interpolation none to avoid interpolation error from datetime format
 presetNameValues = []
 #check if exist and iterate through section names and key 'name' values
 if path.exists('presets.ini') == True:
