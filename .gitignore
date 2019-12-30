@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 
+# vscode
+.vscode/
+
 #plotTS created
 debug.log
 presets.ini

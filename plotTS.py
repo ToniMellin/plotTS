@@ -143,15 +143,15 @@ def plotEngine(fig, plotDict, X_axis, df):
             pName = plotDict[k]['name']
             pMode = plotDict[k]['mode']
             fig.add_trace(go.Scattergl(x=X_axis, y=df[k],
-                    mode=pMode,
-                    name=pName),secondary_y=False,)
+                                        mode=pMode,
+                                        name=pName),secondary_y=False,)
         #plot y2-axis keys
         if plotDict[k]['axis'] == 'y2':
             pName = plotDict[k]['name']
             pMode = plotDict[k]['mode']
             fig.add_trace(go.Scattergl(x=X_axis, y=df[k],
-                    mode=pMode,
-                    name=pName),secondary_y=True,)
+                                        mode=pMode,
+                                        name=pName),secondary_y=True,)
 
 #createFig creates a figure from the data and displays the figure
 def createFig(sec_y, plotDict, x_axis, df):
@@ -215,7 +215,7 @@ if __name__ == "__main__":
     #putting sine value list to dataframe
     df_sine = pd.DataFrame(data=sinelist, columns=['Sine'])
 
-    #combining the time and index dataframe to the created data, creating a new dataframe named df
+    #combining the time and index dataframe to the created data dataframes, creating a new dataframe named df
     df = pd.concat([df_index, df_time, df_random, df_poly, df_sine], axis=1)                                                           
 
     #saving the dataframe as csv                    
@@ -224,7 +224,7 @@ if __name__ == "__main__":
     #reading the input example file and generating a dataframe from it
     df_file = inputFiletoDF('exampledata.csv')
 
-    #correcting the Time data to the imported dateframe to datetime object based on given format
+    #correcting the Time data to the imported dataframe to datetime object based on used format
     datetime_format = '%Y-%m-%d %H:%M:%S'
     df_file_with_time_corrected = convertTimeValues(df_file, 'Time', datetime_format)
 

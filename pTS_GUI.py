@@ -217,7 +217,6 @@ def convertTraceModeToID(trace_mode):
         trace_mode_id = 3
     return trace_mode_id
 
-#TODO add the loading of time format settings
 #loading plot settings from UI to generate the plot
 def loadPlotSettings():
     ui.info('Retrieving plotting settings')
@@ -374,7 +373,7 @@ def press(btn):
                     ui.error('ERROR!! Cannot create dictionary for plotting!!!')
             pTS.saveFigAsHTML(sec_y, plotDict, df2[x_items[0]], df2, HTML_name)
             ui.info('Saving figure as HTML completed!')
-            ui.info('Saved HTML filename:%s', HTML_name)
+            ui.info('Saved HTML filename:%s.html', HTML_name)
             ui.queueFunction(ui.setLabel, 'output', 'Saving figure as HTML completed!')
             ui.queueFunction(ui.setLabelBg, 'output', 'green')
         except Exception as e:
@@ -440,9 +439,6 @@ def press(btn):
         ui.queueFunction(ui.setLabel, 'output', 'Debug ON')
         ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
         ui.setLogFile('debug.log') #the activation by appJar function
-        #logging.basicConfig(stream=sys.stdout, filename='C:\\PyScripts\\GIT\\plotTS\\debug.log', filemode='w', level=logging.DEBUG)
-        #logger = logging.getLogger("appJar")
-        #logger.info('debug.log creation activated')
         ui.info('plotTS %s', version)
 
 #UI START
