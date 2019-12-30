@@ -1,4 +1,4 @@
-pandas==0.25.1
+pandas==0.25.3
 appJar==0.94.0
-plotly==4.1.0
-numpy==1.17.0
+plotly==4.4.1
+numpy==1.18.0
