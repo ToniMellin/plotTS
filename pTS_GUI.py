@@ -390,29 +390,30 @@ def press(btn):
         ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
         try:
             df = pTS.inputFiletoDF(ifile)
+            colList = df.columns
+            ui.debug(colList)
+            numColumns = str(len(colList))
+            ui.info('Read columns from %(filename)s ---> Number of columns %(columns)s', {'filename': ifile, 'columns': numColumns})
+            if numColumns == 0:
+                ui.error('Loaded file has no data!!')
+                ui.queueFunction(ui.setLabel, 'output', 'Loaded file has no data!!')
+                ui.queueFunction(ui.setLabelBg, 'output', 'red')
+            else:
+                ui.clearListBox('X-Axis', callFunction=True)    
+                ui.updateListBox('X-Axis', colList, select=False)
+                ui.clearListBox('Y-Axis', callFunction=True)    
+                ui.updateListBox('Y-Axis', colList, select=False)
+                ui.clearListBox('Y2-Axis', callFunction=True)    
+                ui.updateListBox('Y2-Axis', colList, select=False)
+                ui.info('File loaded!')
+                ui.queueFunction(ui.setLabel, 'output', 'File loaded!')
+                ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
         except Exception as e:
             ui.critical('%s', e)
             ui.error('Could not parse input file to dataframe!!')
             ui.queueFunction(ui.setLabel, 'output', 'ERROR loading file...')
             ui.queueFunction(ui.setLabelBg, 'output', 'red')
-        colList = df.columns
-        ui.debug(colList)
-        numColumns = str(len(colList))
-        ui.info('Read columns from %(filename)s ---> Number of columns %(columns)s', {'filename': ifile, 'columns': numColumns})
-        if numColumns == 0:
-            ui.error('Loaded file has no data!!')
-            ui.queueFunction(ui.setLabel, 'output', 'Loaded file has no data!!')
-            ui.queueFunction(ui.setLabelBg, 'output', 'red')
-        else:
-            ui.clearListBox('X-Axis', callFunction=True)    
-            ui.updateListBox('X-Axis', colList, select=False)
-            ui.clearListBox('Y-Axis', callFunction=True)    
-            ui.updateListBox('Y-Axis', colList, select=False)
-            ui.clearListBox('Y2-Axis', callFunction=True)    
-            ui.updateListBox('Y2-Axis', colList, select=False)
-            ui.info('File loaded!')
-            ui.queueFunction(ui.setLabel, 'output', 'File loaded!')
-            ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
+        
     elif btn == 'Load':
         presetName = ui.getOptionBox('Preset:')
         ui.info('Loading preset %s...', presetName)
