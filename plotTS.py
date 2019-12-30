@@ -179,30 +179,44 @@ def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name):
 
     fig.write_html('{}.html'.format(HTML_name))
 
+#IF YOU RUN plotTS.py BY ITSELF, BELOW CODE WILL BE RUN
 if __name__ == "__main__":
     #enable logging
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-    #TODO better data example possibly another time option
-    #EXAMPLE: starting from creating a datafile to be opened
-    #create a dataframe with 100 data point with integers ranging from 0 to 99, columns named as 'Apples', 'Bananas', 'Cucumbers', 'Dragonfruits'
-    df_data = pd.DataFrame(np.random.randint(0, 100, size=(100, 4)), columns=list(['Apples', 'Bananas', 'Cucumbers', 'Dragonfruits']))
-
-    #creating a time list of 100 timestamps, incrementing by 25 minutes from '2019-12-01T00:00:00'
-    start_date = datetime.fromisoformat('2019-12-01T00:00:00')
-    timelist = []
-    for i in range(0, 100, 1):
-        timestamp = start_date + timedelta(minutes=25)*i
-        timelist.append(timestamp)
-
-    #setting time list to dataframe
-    df_time = pd.DataFrame(data=timelist, columns=['Time'])
-
+    #EXAMPLE DATA: starting from creating a datafile to be opened
     #creating an index to the dataframe from 0 to 99
     df_index = pd.DataFrame(np.arange(100), columns=['index'])
 
+    #creating a time list of 100 timestamps, incrementing by 25 minutes from '2019-12-01T00:00:00'
+    #also creating a list of sine values from range of 0-100
+    #also creating a polynomic function of a parabola with values ranging from 0-100
+    start_date = datetime.fromisoformat('2019-12-01T00:00:00')
+    timelist = []
+    sinelist = []
+    polylist = []
+    for i in range(0, 100, 1):
+        timestamp = start_date + timedelta(minutes=25)*i
+        timelist.append(timestamp)
+        angle = (np.pi/16)*i
+        sinelist.append((np.sin(angle)+1)*50)
+        polyvalue = np.polyval([-0.04,4,0], i)#-0.04x^2 + 4x
+        polylist.append(polyvalue)
+
+    #putting time list to dataframe
+    df_time = pd.DataFrame(data=timelist, columns=['Time'])
+
+    #create a dataframe with 100 data point with integers ranging from 0 to 50, columns named as 'Random'
+    df_random = pd.DataFrame(np.random.randint(0, 50, size=(100, 1)), columns=list(['Random']))
+
+    #putting parabola values to dataframe
+    df_poly = pd.DataFrame(data=polylist, columns=['Parabola'])
+
+    #putting sine value list to dataframe
+    df_sine = pd.DataFrame(data=sinelist, columns=['Sine'])
+
     #combining the time and index dataframe to the created data, creating a new dataframe named df
-    df = pd.concat([df_index, df_time, df_data], axis=1)                                                             
+    df = pd.concat([df_index, df_time, df_random, df_poly, df_sine], axis=1)                                                           
 
     #saving the dataframe as csv                    
     df.to_csv(path_or_buf='exampledata.csv', index=False)
@@ -215,12 +229,12 @@ if __name__ == "__main__":
     df_file_with_time_corrected = convertTimeValues(df_file, 'Time', datetime_format)
 
     #adding rolling averagedata from 5 points to Cucumbers and Dragonfruits
-    df_file_with_averages = addAverageData(df_file_with_time_corrected, ['Cucumbers'], ['Dragonfruits'], 5)
+    df_file_with_averages = addAverageData(df_file_with_time_corrected, ['Random'], ['Sine'], 5)
 
     #creating a plot Dictionary to be used in plotting
     #essentially this dictates how we want the plot to be formed
     #what items in y axis, y2 axis and what trace type
-    plotDictionary = createPlotDict(df_file_with_averages, ['Apples', 'Bananas', 'Cucumbers', 'Cucumbers_avg=5'], ['Dragonfruits', 'Dragonfruits_avg=5'], 2)
+    plotDictionary = createPlotDict(df_file_with_averages, ['Parabola', 'Random', 'Random_avg=5'], [ 'Sine', 'Sine_avg=5'], 2)
 
     #creating the figure and plotting the data by using the 'Time' as x-axis
     createFig(True, plotDictionary, df_file_with_averages['Time'], df_file_with_averages)
