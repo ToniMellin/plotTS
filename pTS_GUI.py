@@ -447,7 +447,11 @@ ui.startTabbedFrame("TabbedFrame")
 ui.startTab("General")
 #Data input 
 ui.startFrame('Data Input', row=0, column=0, colspan=3)
-ui.startLabelFrame('Drag & Drop datafile here')
+try:
+    ui.startLabelFrame('Drag & Drop datafile here')
+except Exception as e:
+     ui.critical('%s', e)
+     pass
 ui.addLabel("dropLab", "\t\t\tDrag & Drop datafile here (or use File)\t\t\t")
 ui.setLabelBg('dropLab', 'light cyan')
 ui.setLabelFg('dropLab', 'grey')
