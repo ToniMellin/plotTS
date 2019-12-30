@@ -2,8 +2,18 @@
 __pycache__/
 *.py[cod]
 
+# vscode
+.vscode/
+
 #plotTS created
 debug.log
 presets.ini
 exampledata.csv
 save_example.html
+
+#development files
+plotTS_development.ipynb
+plotTS_exampledata_development.ipynb
+plotTS_timeconvert_development.ipynb
+testdata.csv
+exampledata_dev.csv
