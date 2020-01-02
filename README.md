@@ -17,7 +17,7 @@ pip install -r requirements.txt
 
 ## Features
 
-### 1.2.0
+### 1.2.0 / 1.2.1
 - Convert time x-axis to datetime object as per given format
 - Automatic time x-axis conversion option for certain formats
 - Updated plotTS.py independent examples
@@ -71,7 +71,7 @@ Select any wanted options:
 
 **Auto Time Formats**
 The **Auto** option for x-axis time goes through the below datetime formats:
-- '%Y-%m-%d %H:%M%S',
+- '%Y-%m-%d %H:%M:%S',
 - '%Y-%m-%dT%H:%M:%S',
 - '%Y-%m-%dT%H:%M:%SZ',
 - '%Y-%m-%d %H:%M',

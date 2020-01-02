@@ -6,7 +6,7 @@ import sys
 import plotTS as pTS
 from configparser import ConfigParser
 
-version = '1.2.0'
+version = '1.2.1'
 print("\nplotTS {}\n".format(version))
 
 #logging configuration
