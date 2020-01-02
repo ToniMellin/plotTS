@@ -56,7 +56,7 @@ def convertNonDateTimeValues(timestamp):
 
 #automatic time conversion for given dataframe and X_axis column
 def autoConvertTimeValues(df, X_axis):
-    AUTO_TIME_FORMATS =[    '%Y-%m-%d %H:%M%S',
+    AUTO_TIME_FORMATS =[    '%Y-%m-%d %H:%M:%S',
                             '%Y-%m-%dT%H:%M:%S',
                             '%Y-%m-%dT%H:%M:%SZ',
                             '%Y-%m-%d %H:%M',
