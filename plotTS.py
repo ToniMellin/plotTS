@@ -165,9 +165,10 @@ def createFig(sec_y, plotDict, x_axis, df):
     plotEngine(fig, plotDict, x_axis, df)
 
     fig.show()
+    pTS_logger.debug('Showing plot')
 
 #saveFigAsHTML works the same as createFig, except it produces a HTML file with all the data plotted
-def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name):
+def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name_path):
     #debug messages before plotting
     pTS_logger.debug('plotting dataframe...')
     pTS_logger.debug('dataframe dtypes: \n%s', df.dtypes)
@@ -177,7 +178,9 @@ def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name):
 
     plotEngine(fig, plotDict, x_axis, df)
 
-    fig.write_html('{}.html'.format(HTML_name))
+    fig.write_html('{}.html'.format(HTML_name_path))
+    pTS_logger.debug('Saved HTML file: %s', HTML_name_path)
+
 
 #IF YOU RUN plotTS.py BY ITSELF, BELOW CODE WILL BE RUN
 if __name__ == "__main__":

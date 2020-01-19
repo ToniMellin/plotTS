@@ -1,12 +1,11 @@
 from appJar import gui
 import os
-from os import path
 import logging
 import sys
 import plotTS as pTS
 from configparser import ConfigParser
 
-version = '1.2.1'
+version = '1.3.0'
 print("\nplotTS {}\n".format(version))
 
 #logging configuration
@@ -16,9 +15,10 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 ui = gui("plotTS {}".format(version), "650x700") #, useTtk=True)
 #ui.setTtkTheme('winnative')
 ui.increaseButtonFont()
-ui.setFont(12)
+ui.setFont(11)
 ui.setFg('Black', override=False)
 ui.setBg('darkgray', override=False, tint=False)
+ui.resizable = False
 
 #appJar UI logging settings
 ui.setLogLevel('DEBUG')
@@ -323,12 +323,21 @@ def press(btn):
             ui.error("Issues with plotting")
             ui.queueFunction(ui.setLabel, 'output', 'ERROR plotting!!!')
             ui.queueFunction(ui.setLabelBg, 'output', 'red')
-    elif btn == 'SaveAsHTML':
+    elif btn == 'Save As HTML':
         #similar to plot except save the output as html file
+        save_location = ui.getEntry('output_location')
+        ui.debug('Save location given: %s', save_location)
         HTML_entry = ui.getEntry('HTML filename')
         ui.debug('HTML filename given: %s', HTML_entry)
+        if not save_location:
+            ui.setFocus('output_location')
+            ui.error('No save directory given to save as HTML!!')
+            ui.queueFunction(ui.setLabel, 'output', 'Need save directory to save as HTML...')
+            ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
+            return
         if not HTML_entry:
             ui.setFocus('HTML filename')
+            ui.error('No filename given to save as HTML!!')
             ui.queueFunction(ui.setLabel, 'output', 'Need filename to save as HTML...')
             ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
             return
@@ -371,9 +380,8 @@ def press(btn):
                 except Exception as e:
                     ui.critical('%s', e)
                     ui.error('ERROR!! Cannot create dictionary for plotting!!!')
-            pTS.saveFigAsHTML(sec_y, plotDict, df2[x_items[0]], df2, HTML_name)
+            pTS.saveFigAsHTML(sec_y, plotDict, df2[x_items[0]], df2, os.path.join(save_location, HTML_name))
             ui.info('Saving figure as HTML completed!')
-            ui.info('Saved HTML filename:%s.html', HTML_name)
             ui.queueFunction(ui.setLabel, 'output', 'Saving figure as HTML completed!')
             ui.queueFunction(ui.setLabelBg, 'output', 'green')
         except Exception as e:
@@ -412,8 +420,8 @@ def press(btn):
             ui.error('Could not parse input file to dataframe!!')
             ui.queueFunction(ui.setLabel, 'output', 'ERROR loading file...')
             ui.queueFunction(ui.setLabelBg, 'output', 'red')
-        
     elif btn == 'Load':
+        #Load preset settings
         presetName = ui.getOptionBox('Preset:')
         ui.info('Loading preset %s...', presetName)
         try:
@@ -440,6 +448,16 @@ def press(btn):
         ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
         ui.setLogFile('debug.log') #the activation by appJar function
         ui.info('plotTS %s', version)
+    elif btn == 'Insert Program location -->':
+        ui.setEntry('output_location', os.path.abspath(os.getcwd()), callFunction=True)
+    elif btn == 'Insert Datafile location -->':
+        inputfile = ui.getEntry('file')
+        if inputfile != '': 
+            splitted = os.path.split(inputfile)
+            ui.setEntry('output_location', os.path.abspath(splitted[0]), callFunction=True)
+        else:
+            ui.queueFunction(ui.setLabel, 'output', 'No Datafile Loaded!...')
+            ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
 
 #UI START
 ##General TAB and TAB start      
@@ -459,6 +477,7 @@ except Exception as e:
 ui.stopLabelFrame()
 ui.addFileEntry("file")
 ui.addButton('Load file', press)
+ui.getButtonWidget('Load file').config(font="Helvetica 12")
 ui.stopFrame()
 #Axis information and data selection
 ui.startFrame('Axis Frame', row=1, column=0, colspan=3)
@@ -563,7 +582,7 @@ ui.setBg('ghost white')
 config = ConfigParser(strict=False, interpolation=None)#interpolation none to avoid interpolation error from datetime format
 presetNameValues = []
 #check if exist and iterate through section names and key 'name' values
-if path.exists('presets.ini') == True:
+if os.path.exists('presets.ini') == True:
     config.read('presets.ini', encoding='utf-8')
     presetSectionValues = config.sections()
     ui.info('Presets loaded: %s', presetSectionValues)
@@ -681,14 +700,33 @@ ui.addLabelEntry("Preset Name")
 ui.stopFrame()
 ui.stopLabelFrame()
 
-#Plot command, SaveAsHTML and output label
+#Plot command, 
 ui.addButton('Plot', press)
-ui.addLabelEntry('HTML filename')
-ui.addButton('SaveAsHTML', press)
+ui.getButtonWidget('Plot').config(font="Helvetica 12")
 
+#SaveAsHTML directory
+ui.startLabelFrame('Save as HTML save directory')
+ui.startFrame('output_choise_1', row=5, column=0, colspan=1)
+ui.addButton('Insert Program location -->', press)
+ui.addButton('Insert Datafile location -->', press)
+ui.stopFrame()
+ui.startFrame('output_choise_2', row=5, column=1, colspan=3)
+ui.addDirectoryEntry("output_location")
+ui.stopFrame()
+ui.stopLabelFrame()
+
+#SaveAsHTML filename and button
+ui.addLabelEntry('HTML filename')
+ui.getLabelWidget("HTML filename").config(font="Helvetica 12")
+ui.addButton('Save As HTML', press)
+ui.getButtonWidget('Save As HTML').config(font="Helvetica 12")
+
+#Output label
 ui.addLabel('output')
 ui.setLabel('output', "Ready - Waiting Command")
 ui.setLabelBg("output", "yellow")
+ui.getLabelWidget("output").config(font="Helvetica 14")
 
 ui.stopFrame() #End bottoms part
+
 ui.go()

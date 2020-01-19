@@ -1,7 +1,7 @@
 # plotTS
 Easy plotting GUI to use plotly in creating plots from data files (.csv or .xlsx)
 
-![2019-12-30 19_08_55-Window](https://user-images.githubusercontent.com/55407190/71592172-ebf32e80-2b37-11ea-9a77-58ed20d9efa7.png)
+![image](https://user-images.githubusercontent.com/55407190/72685406-6a693d80-3af2-11ea-9b70-b4993d715a46.png)
 
 ![example](https://user-images.githubusercontent.com/55407190/71592026-417b0b80-2b37-11ea-97d3-f90072f71c21.png)
 
@@ -14,8 +14,13 @@ Install needed libraries to python 3.7 with pip:
 ```
 pip install -r requirements.txt
 ```
+*Optionally you can use an .exe version to run without having python or libraries installed. Check release 1.3.0 exe version to do so.
 
 ## Features
+
+### 1.3.0
+- Save plot as HTML file location selection
+- Quick keys for save location (Program location & Datafile location)
 
 ### 1.2.0 / 1.2.1
 - Convert time x-axis to datetime object as per given format
@@ -50,6 +55,21 @@ Load File to get column names
 Select wanted X-axis and Y-axis and/or Y2-axis (use **Shift** and **Ctrl** to select multiple or certain columns)
 
 Press Plot
+
+#### Save plot as HTML
+You need to have pTS_GUI.py running
+
+Give a file location by dragging and dropping to the "blue" area or select by pressing 'File'
+
+Load File to get column names
+
+Select wanted X-axis and Y-axis and/or Y2-axis (use **Shift** and **Ctrl** to select multiple or certain columns)
+
+Give a save directory location with the quick keys for save location (Program location & Datafile location) or select a different save directory by pressing 'Directory' and 'Select Folder'
+
+Give a name for the file to 'HTML filename'
+
+Press Save As HTML
 
 #### Settings
 Go to settings tab
