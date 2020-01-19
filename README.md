@@ -14,6 +14,7 @@ Install needed libraries to python 3.7 with pip:
 ```
 pip install -r requirements.txt
 ```
+*Optionally you can use an .exe version to run without having python or libraries installed. Check release 1.3.0 exe version to do so.
 
 ## Features
 
