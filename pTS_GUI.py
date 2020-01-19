@@ -12,10 +12,10 @@ print("\nplotTS {}\n".format(version))
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 #GUI initialization part
-ui = gui("plotTS {}".format(version), "650x750") #, useTtk=True)
+ui = gui("plotTS {}".format(version), "650x700") #, useTtk=True)
 #ui.setTtkTheme('winnative')
 ui.increaseButtonFont()
-ui.setFont(12)
+ui.setFont(11)
 ui.setFg('Black', override=False)
 ui.setBg('darkgray', override=False, tint=False)
 ui.resizable = False
@@ -421,6 +421,7 @@ def press(btn):
             ui.queueFunction(ui.setLabel, 'output', 'ERROR loading file...')
             ui.queueFunction(ui.setLabelBg, 'output', 'red')
     elif btn == 'Load':
+        #Load preset settings
         presetName = ui.getOptionBox('Preset:')
         ui.info('Loading preset %s...', presetName)
         try:
@@ -451,8 +452,12 @@ def press(btn):
         ui.setEntry('output_location', os.path.abspath(os.getcwd()), callFunction=True)
     elif btn == 'Insert Datafile location -->':
         inputfile = ui.getEntry('file')
-        splitted = os.path.split(inputfile)
-        ui.setEntry('output_location', os.path.abspath(splitted[0]), callFunction=True)
+        if inputfile != '': 
+            splitted = os.path.split(inputfile)
+            ui.setEntry('output_location', os.path.abspath(splitted[0]), callFunction=True)
+        else:
+            ui.queueFunction(ui.setLabel, 'output', 'No Datafile Loaded!...')
+            ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
 
 #UI START
 ##General TAB and TAB start      
@@ -472,6 +477,7 @@ except Exception as e:
 ui.stopLabelFrame()
 ui.addFileEntry("file")
 ui.addButton('Load file', press)
+ui.getButtonWidget('Load file').config(font="Helvetica 12")
 ui.stopFrame()
 #Axis information and data selection
 ui.startFrame('Axis Frame', row=1, column=0, colspan=3)
@@ -696,6 +702,7 @@ ui.stopLabelFrame()
 
 #Plot command, 
 ui.addButton('Plot', press)
+ui.getButtonWidget('Plot').config(font="Helvetica 12")
 
 #SaveAsHTML directory
 ui.startLabelFrame('Save as HTML save directory')
@@ -710,12 +717,15 @@ ui.stopLabelFrame()
 
 #SaveAsHTML filename and button
 ui.addLabelEntry('HTML filename')
+ui.getLabelWidget("HTML filename").config(font="Helvetica 12")
 ui.addButton('Save As HTML', press)
+ui.getButtonWidget('Save As HTML').config(font="Helvetica 12")
 
 #Output label
 ui.addLabel('output')
 ui.setLabel('output', "Ready - Waiting Command")
 ui.setLabelBg("output", "yellow")
+ui.getLabelWidget("output").config(font="Helvetica 14")
 
 ui.stopFrame() #End bottoms part
 
