@@ -17,3 +17,5 @@ plotTS_exampledata_development.ipynb
 plotTS_timeconvert_development.ipynb
 testdata.csv
 exampledata_dev.csv
+testdata_with_issues.csv
+plotTS_development_dropDataWithIssues.ipynb
