@@ -5,20 +5,20 @@ import sys
 import plotTS as pTS
 from configparser import ConfigParser
 
-version = '1.3.0'
+version = '1.3.1'
 print("\nplotTS {}\n".format(version))
 
 #logging configuration
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 #GUI initialization part
-ui = gui("plotTS {}".format(version), "650x700") #, useTtk=True)
+ui = gui("plotTS {}".format(version), "650x750") #, useTtk=True)
 #ui.setTtkTheme('winnative')
 ui.increaseButtonFont()
 ui.setFont(11)
 ui.setFg('Black', override=False)
 ui.setBg('darkgray', override=False, tint=False)
-ui.resizable = False
+ui.resizable = True
 
 #appJar UI logging settings
 ui.setLogLevel('DEBUG')
@@ -476,12 +476,14 @@ except Exception as e:
     pass
 ui.stopLabelFrame()
 ui.addFileEntry("file")
+ui.getEntryWidget('file').config(font="Helvetica 12")
 ui.addButton('Load file', press)
 ui.getButtonWidget('Load file').config(font="Helvetica 12")
 ui.stopFrame()
 #Axis information and data selection
 ui.startFrame('Axis Frame', row=1, column=0, colspan=3)
 ui.startLabelFrame('Select by clicking and use CTRL or SHIFT to add multiple items')
+ui.addLabel('EmptyAxisLabel', '\t') #to remove overcrowding in the axis setting frame
 ui.startFrame('X_Pane', row=1, column=0)
 ui.addLabel("X_select", "Select X-Axis:")
 ui.addListBox('X-Axis', '')
@@ -525,7 +527,7 @@ ui.startFrame('TimeConvert_4', row=0, column=3, colspan=4)
 ui.stretch = "column"
 ui.sticky = "ew" 
 ui.addLabelEntry('Time format:')
-ui.setEntry('Time format:', '%Y-%m-%d %H:%M:%S', callFunction=True)
+ui.setEntry('Time format:', '%Y-%m-%d %H:%M:%S%z', callFunction=True)
 ui.stopFrame()
 ui.startFrame('TimeConvert2_1', row=1, column=0, colspan=5)
 ui.addLabel("TimeConvert_Tip", "*Tip: check python datetime library documentation on strptime format")
@@ -716,6 +718,7 @@ ui.stopFrame()
 ui.stopLabelFrame()
 
 #SaveAsHTML filename and button
+#ui.addLabel('EmptyHTMLSaveLabel', '\t') #to remove overcrowding in the save as HTML space
 ui.addLabelEntry('HTML filename')
 ui.getLabelWidget("HTML filename").config(font="Helvetica 12")
 ui.addButton('Save As HTML', press)

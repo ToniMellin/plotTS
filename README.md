@@ -1,7 +1,7 @@
 # plotTS
 Easy plotting GUI to use plotly in creating plots from data files (.csv or .xlsx)
 
-![image](https://user-images.githubusercontent.com/55407190/72685406-6a693d80-3af2-11ea-9b70-b4993d715a46.png)
+![image](https://user-images.githubusercontent.com/55407190/72760590-fc03a880-3be1-11ea-8c43-d6b72c1104f2.png)
 
 ![example](https://user-images.githubusercontent.com/55407190/71592026-417b0b80-2b37-11ea-97d3-f90072f71c21.png)
 
