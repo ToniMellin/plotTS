@@ -18,9 +18,10 @@ pip install -r requirements.txt
 
 ## Features
 
-### 1.3.0
+### 1.3.0 / 1.3.1
 - Save plot as HTML file location selection
 - Quick keys for save location (Program location & Datafile location)
+- More autotimeformat time formats (1.3.1)
 
 ### 1.2.0 / 1.2.1
 - Convert time x-axis to datetime object as per given format
@@ -92,17 +93,25 @@ Select any wanted options:
 **Auto Time Formats**
 The **Auto** option for x-axis time goes through the below datetime formats:
 - '%Y-%m-%d %H:%M:%S',
+- '%Y-%m-%d %H:%M:%S%z',
 - '%Y-%m-%dT%H:%M:%S',
 - '%Y-%m-%dT%H:%M:%SZ',
+- '%Y-%m-%dT%H:%M:%S%z',
 - '%Y-%m-%d %H:%M',
 - '%Y/%m/%d %H:%M:%S',
 - '%Y/%m/%d %H:%M',
 - '%d/%m/%Y %H:%M:%S',
 - '%d/%m/%Y %H:%M',
+- '%Y.%m.%d %H:%M:%S',
+- '%Y.%m.%d %H:%M',
+- '%d.%m.%Y %H:%M:%S',
+- '%d.%m.%Y %H:%M',
 - '%H:%M:%S %d-%m-%Y',
 - '%H:%M %d-%m-%Y',
 - '%H:%M:%S %d/%m/%Y',
-- '%H:%M %d/%m/%Y'
+- '%H:%M %d/%m/%Y',
+- '%H:%M:%S %d.%m.%Y',
+- '%H:%M %d.%m.%Y'
 
 If none of them are a match it will still try a non date time conversion, which assumes a time format separated by colon ':', also accepting milliseconds. Thus below time formats should be recognized and changed to timedelta objects (which plotly can identify and use properly) in the internal dataframe before plotting:
 - 123:22:14.123 *(123 hours, 22 minutes, 14 seconds, 123 milliseconds)*
