@@ -5,7 +5,7 @@ import sys
 import plotTS as pTS
 from configparser import ConfigParser
 
-version = '1.3.1'
+version = '1.4.0'
 print("\nplotTS {}\n".format(version))
 
 #logging configuration
@@ -508,7 +508,7 @@ ui.stopLabelFrame()
 ui.stopFrame()
 ui.stopTab() #End General Tab
 
-
+#TODO add dropna parameters options (On/off, row/column, threshold..)
 ##Settings TAB
 ui.startTab("Settings")
 #Time convert settings

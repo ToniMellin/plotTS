@@ -161,6 +161,7 @@ def plotEngine(fig, plotDict, X_axis, df):
                                         mode=pMode,
                                         name=pName),secondary_y=True,)
 
+#TODO add dropna for given parameters
 #createFig creates a figure from the data and displays the figure
 def createFig(sec_y, plotDict, x_axis, df):
     #debug messages before plotting
@@ -175,6 +176,7 @@ def createFig(sec_y, plotDict, x_axis, df):
     fig.show()
     pTS_logger.debug('Showing plot')
 
+#TODO add dropna for given parameters
 #saveFigAsHTML works the same as createFig, except it produces a HTML file with all the data plotted
 def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name_path):
     #debug messages before plotting
