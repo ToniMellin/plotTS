@@ -1,7 +1,7 @@
 # plotTS
 Easy plotting GUI to use plotly in creating plots from data files (.csv or .xlsx)
 
-![image](https://user-images.githubusercontent.com/55407190/72685406-6a693d80-3af2-11ea-9b70-b4993d715a46.png)
+![image](https://user-images.githubusercontent.com/55407190/72760590-fc03a880-3be1-11ea-8c43-d6b72c1104f2.png)
 
 ![example](https://user-images.githubusercontent.com/55407190/71592026-417b0b80-2b37-11ea-97d3-f90072f71c21.png)
 
@@ -18,9 +18,10 @@ pip install -r requirements.txt
 
 ## Features
 
-### 1.3.0
+### 1.3.0 / 1.3.1
 - Save plot as HTML file location selection
 - Quick keys for save location (Program location & Datafile location)
+- More autotimeformat time formats (1.3.1)
 
 ### 1.2.0 / 1.2.1
 - Convert time x-axis to datetime object as per given format
@@ -92,17 +93,25 @@ Select any wanted options:
 **Auto Time Formats**
 The **Auto** option for x-axis time goes through the below datetime formats:
 - '%Y-%m-%d %H:%M:%S',
+- '%Y-%m-%d %H:%M:%S%z',
 - '%Y-%m-%dT%H:%M:%S',
 - '%Y-%m-%dT%H:%M:%SZ',
+- '%Y-%m-%dT%H:%M:%S%z',
 - '%Y-%m-%d %H:%M',
 - '%Y/%m/%d %H:%M:%S',
 - '%Y/%m/%d %H:%M',
 - '%d/%m/%Y %H:%M:%S',
 - '%d/%m/%Y %H:%M',
+- '%Y.%m.%d %H:%M:%S',
+- '%Y.%m.%d %H:%M',
+- '%d.%m.%Y %H:%M:%S',
+- '%d.%m.%Y %H:%M',
 - '%H:%M:%S %d-%m-%Y',
 - '%H:%M %d-%m-%Y',
 - '%H:%M:%S %d/%m/%Y',
-- '%H:%M %d/%m/%Y'
+- '%H:%M %d/%m/%Y',
+- '%H:%M:%S %d.%m.%Y',
+- '%H:%M %d.%m.%Y'
 
 If none of them are a match it will still try a non date time conversion, which assumes a time format separated by colon ':', also accepting milliseconds. Thus below time formats should be recognized and changed to timedelta objects (which plotly can identify and use properly) in the internal dataframe before plotting:
 - 123:22:14.123 *(123 hours, 22 minutes, 14 seconds, 123 milliseconds)*
