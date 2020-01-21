@@ -14,9 +14,13 @@ Install needed libraries to python 3.7 with pip:
 ```
 pip install -r requirements.txt
 ```
-*Optionally you can use an .exe version to run without having python or libraries installed. Check release 1.3.0 exe version to do so.
+*Optionally you can use an .exe version to run without having python or libraries installed. Check release 1.3.0 exe version or later to do so.
 
 ## Features
+
+### 1.4.0
+- Possibility to drop data rows that have empty-values or NaN values (only effects columns selected to be used in plotting)
+- Choice to show pop-up listing of dropped rows
 
 ### 1.3.0 / 1.3.1
 - Save plot as HTML file location selection

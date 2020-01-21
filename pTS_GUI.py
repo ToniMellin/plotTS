@@ -35,6 +35,7 @@ def findPresetID(name):
     ui.queueFunction(ui.setLabelBg, 'output', 'red')
     return False
 
+#TODO add data cleaning options
 #collect and change preset values in config and then save the presets to preset.ini
 def changePresetValues(oldName, newName):
     preset_id = int(findPresetID(oldName))
@@ -106,6 +107,7 @@ def checkIfPresetDataEmpty(presetSec):
     else:
         return False
 
+#TODO add data cleaning options
 #load preset settings
 def loadPresetSettings(presetName):
     preset_id = int(findPresetID(presetName))
@@ -272,6 +274,7 @@ def externalDrop(data):
     ui.info('Data drop used: %s', ofile)
     ui.setEntry('file', ofile, callFunction=True)
 
+#TODO add data cleaning options
 #button press actions
 def press(btn):
     ui.info('User pressed --> %s', btn)
@@ -558,11 +561,29 @@ ui.startFrame('Average_3', row=3, column=2, colspan=1)
 ui.addLabel("Average_spin", "Averaging points:")
 ui.stopFrame()
 ui.startFrame('Average_4', row=3, column=3, colspan=1)
-ui.addSpinBoxRange("average_rollNum", 1, 100)
+ui.addSpinBoxRange("average_rollNum", 1, 200)
+ui.stopFrame()
+ui.stopLabelFrame()
+ui.startLabelFrame('Clean out empty and NaN data rows')
+ui.startFrame('CleanData_1', row=4, column=0, colspan=1)
+ui.addRadioButton("cleandata", "On")
+ui.stopFrame()
+ui.startFrame('CleanData_2', row=4, column=1, colspan=1)
+ui.addRadioButton("cleandata", "Off")
+ui.setRadioButton("cleandata", "Off", callFunction=True)
+ui.stopFrame()
+ui.startFrame('CleanData_3', row=4, column=2, colspan=2)
+ui.addCheckBox("Show cleaned data rows in a pop-up")
+ui.stopFrame()
+ui.startFrame('CleanData_4', row=5, column=0, colspan=2)
+ui.addCheckBox("Keep row if non-empty values equal to or more than:")
+ui.stopFrame()
+ui.startFrame('CleanData_5', row=5, column=2, colspan=1)
+ui.addSpinBoxRange("cleandata_tresh", 1, 100)
 ui.stopFrame()
 ui.stopLabelFrame()
 #empty label that squishes the settings above more together
-ui.addLabel('Emptylabel', '\n\n\n\n\n\n', row=4, colspan=3, rowspan=5)
+ui.addLabel('Emptylabel', '\n\n', row=5, colspan=3, rowspan=2)
 ui.stopTab() #End settings tab
 
 ##About TAB
@@ -580,6 +601,7 @@ ui.stopTabbedFrame() #END tabbing
 ui.startFrame('Bottom', row=3, column=0, colspan=3)
 ui.setBg('ghost white')
 
+#TODO add data cleaning options
 #importing presets OR creating default preset file if missing
 config = ConfigParser(strict=False, interpolation=None)#interpolation none to avoid interpolation error from datetime format
 presetNameValues = []
@@ -689,7 +711,6 @@ else:
             presetNameValues.append(presetName)
     ui.info('Preset names: %s', presetNameValues)
 
-
 #Presets part
 ui.startLabelFrame('Presets')
 ui.setLabelFrameBg('Presets', 'ghost white')
@@ -718,7 +739,6 @@ ui.stopFrame()
 ui.stopLabelFrame()
 
 #SaveAsHTML filename and button
-#ui.addLabel('EmptyHTMLSaveLabel', '\t') #to remove overcrowding in the save as HTML space
 ui.addLabelEntry('HTML filename')
 ui.getLabelWidget("HTML filename").config(font="Helvetica 12")
 ui.addButton('Save As HTML', press)

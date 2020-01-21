@@ -117,6 +117,18 @@ def addAverageData(df, y_List, y2_List, average_rollNum):
         pTS_logger.critical('%s', e)
         pTS_logger.exception('Issue averaging data')
     
+#data cleaning function, to remove empty-valued or NaN valued rows
+def cleanData(df, treshold_ON, threshold_num, columns_list):
+    if treshold_ON == True:
+        df_clean = df.dropna(tresh=threshold_num, subset=columns_list)
+    else:
+        df_clean = df.dropna(subset=columns_list)
+
+    #TODO check https://stackoverflow.com/questions/17095101/outputting-difference-in-two-pandas-dataframes-side-by-side-highlighting-the-d if that is enough
+    df_removed = df
+
+    return df_clean, df_removed
+
 
 #creates the dictionary key for plotEngine to use as figure building instructions
 def createPlotDict(df, y_keys, y2_keys, trace_mode_id):
@@ -161,7 +173,7 @@ def plotEngine(fig, plotDict, X_axis, df):
                                         mode=pMode,
                                         name=pName),secondary_y=True,)
 
-#TODO add dropna for given parameters
+#TODO add dataclean for given parameters
 #createFig creates a figure from the data and displays the figure
 def createFig(sec_y, plotDict, x_axis, df):
     #debug messages before plotting
@@ -176,7 +188,7 @@ def createFig(sec_y, plotDict, x_axis, df):
     fig.show()
     pTS_logger.debug('Showing plot')
 
-#TODO add dropna for given parameters
+#TODO add dataclean for given parameters
 #saveFigAsHTML works the same as createFig, except it produces a HTML file with all the data plotted
 def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name_path):
     #debug messages before plotting
