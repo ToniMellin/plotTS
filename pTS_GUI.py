@@ -70,6 +70,18 @@ def changePresetValues(oldName, newName):
         average_rollNum = ui.getSpinBox('average_rollNum')
         ui.debug('average roll num: %s', average_rollNum)
         config.set(presetSec, 'avg_rollnum', average_rollNum)
+        datacleanButton = ui.getRadioButton('cleandata')
+        ui.debug('data cleaning button is %s', datacleanButton)
+        config.set(presetSec, 'datacleaning_on', datacleanButton)
+        dataclean_show_tick = ui.getCheckBox('cleandata_show')
+        ui.debug('data cleaning show tick is %s', dataclean_show_tick)
+        config.set(presetSec, 'datacleaning_show', str(dataclean_show_tick))
+        dataclean_keep_tick = ui.getCheckBox('cleandata_keep')
+        ui.debug('data cleaning keep tick is %s', dataclean_keep_tick)
+        config.set(presetSec, 'datacleaning_keep', str(dataclean_keep_tick))
+        dataclean_rollNum = ui.getSpinBox('cleandata_tresh')
+        ui.debug('data cleaning treshold: %s', dataclean_rollNum)
+        config.set(presetSec, 'datacleaning_tresh', dataclean_rollNum)
         writeToConfig() #save config
         #change UI preset naming
         ui.renameOptionBoxItem('Preset:', oldName, newName, callFunction=False)
@@ -83,6 +95,10 @@ def changePresetValues(oldName, newName):
         ui.info('Preset %(pres)s markers changed to -> %(traceInfo)s', {'pres': presetSec, 'traceInfo': trace_mode})
         ui.info('Preset %(pres)s average mode changed to -> %(averageInfo)s', {'pres': presetSec, 'averageInfo': averageButton})
         ui.info('Preset %(pres)s average rolling number changed to -> %(avgRollInfo)s', {'pres': presetSec, 'avgRollInfo': average_rollNum})
+        ui.info('Preset %(pres)s data cleaning mode changed to -> %(cleanMode)s', {'pres': presetSec, 'cleanMode': datacleanButton})
+        ui.info('Preset %(pres)s data cleaning show changed to -> %(cleanShow)s', {'pres': presetSec, 'cleanShow': dataclean_show_tick})
+        ui.info('Preset %(pres)s data cleaning keep changed to -> %(cleanKeep)s', {'pres': presetSec, 'cleanKeep': dataclean_keep_tick})
+        ui.info('Preset %(pres)s data cleaning treshold changed to -> %(cleanTresh)s', {'pres': presetSec, 'cleanTresh': dataclean_rollNum})
         ui.info('Preset %s saved', presetSec)
         ui.queueFunction(ui.setLabel, 'output', 'Saved preset: {}'.format(newName))
         ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
@@ -101,13 +117,16 @@ def checkIfPresetDataEmpty(presetSec):
         dataCount += 1
     if config[presetSec].get('y2_axis'):
         dataCount += 1
-    
+    ui.debug('preset dataCount is %s', dataCount)
     if dataCount == 0:
         return True
     else:
         return False
 
-#TODO add data cleaning options
+#strings to boolean
+def str2bool(v):
+  return v.lower() in ("True", "true", "t", "1")
+
 #load preset settings
 def loadPresetSettings(presetName):
     preset_id = int(findPresetID(presetName))
@@ -194,6 +213,19 @@ def loadPresetSettings(presetName):
             avg_rollNum = config[presetSec].get('avg_rollnum')
             ui.setSpinBox('average_rollNum', int(avg_rollNum), callFunction=True)
             ui.debug('set average rolling as %s', avg_rollNum)
+            #load and set data cleaning settings
+            dataClean_ON = config[presetSec].get('datacleaning_on')
+            ui.setRadioButton("cleandata", dataClean_ON, callFunction=True)
+            ui.debug('set data cleaning %s', dataClean_ON)
+            dataClean_SHOW = config[presetSec].get('datacleaning_show')
+            ui.setCheckBox("cleandata_show", ticked=str2bool(dataClean_SHOW), callFunction=True)
+            ui.debug('set data cleaning show to %s', dataClean_SHOW)
+            dataClean_KEEP = config[presetSec].get('datacleaning_keep')
+            ui.setCheckBox("cleandata_keep", ticked=str2bool(dataClean_KEEP), callFunction=True)
+            ui.debug('set data cleaning keeping to %s', dataClean_KEEP)
+            dataClean_TRESH = config[presetSec].get('datacleaning_tresh')
+            ui.setSpinBox('cleandata_tresh', int(dataClean_TRESH), callFunction=True)
+            ui.debug('set average rolling as %s', dataClean_TRESH)
             #set outputs after loading all settings
             ui.info('Preset %(pres)s loaded as %(name)s', {'pres': presetSec, 'name': presetName})
             ui.queueFunction(ui.setLabel, 'output', 'Loaded preset: {}'.format(presetName))
@@ -573,10 +605,10 @@ ui.addRadioButton("cleandata", "Off")
 ui.setRadioButton("cleandata", "Off", callFunction=True)
 ui.stopFrame()
 ui.startFrame('CleanData_3', row=4, column=2, colspan=2)
-ui.addCheckBox("Show cleaned data rows in a pop-up")
+ui.addNamedCheckBox("Show cleaned data rows in a pop-up", 'cleandata_show')
 ui.stopFrame()
 ui.startFrame('CleanData_4', row=5, column=0, colspan=2)
-ui.addCheckBox("Keep row if non-empty values equal to or more than:")
+ui.addNamedCheckBox("Keep row if non-empty values equal to or more than:", 'cleandata_keep')
 ui.stopFrame()
 ui.startFrame('CleanData_5', row=5, column=2, colspan=1)
 ui.addSpinBoxRange("cleandata_tresh", 1, 100)
@@ -601,7 +633,6 @@ ui.stopTabbedFrame() #END tabbing
 ui.startFrame('Bottom', row=3, column=0, colspan=3)
 ui.setBg('ghost white')
 
-#TODO add data cleaning options
 #importing presets OR creating default preset file if missing
 config = ConfigParser(strict=False, interpolation=None)#interpolation none to avoid interpolation error from datetime format
 presetNameValues = []
@@ -635,7 +666,11 @@ else:
         'timeconvert_format': '',
         'marker_trace': '',
         'avg_on': '',
-        'avg_rollnum': ''
+        'avg_rollnum': '',
+        'datacleaning_on': '',
+        'datacleaning_show': '',
+        'datacleaning_keep': '',
+        'datacleaning_tresh': ''
     }
     config['preset2'] = {
         'id': 2,
@@ -647,7 +682,11 @@ else:
         'timeconvert_format': '',
         'marker_trace': '',
         'avg_on': '',
-        'avg_rollnum': ''
+        'avg_rollnum': '',
+        'datacleaning_on': '',
+        'datacleaning_show': '',
+        'datacleaning_keep': '',
+        'datacleaning_tresh': ''
     }
     config['preset3'] = {
         'id': 3,
@@ -659,7 +698,11 @@ else:
         'timeconvert_format': '',
         'marker_trace': '',
         'avg_on': '',
-        'avg_rollnum': ''
+        'avg_rollnum': '',
+        'datacleaning_on': '',
+        'datacleaning_show': '',
+        'datacleaning_keep': '',
+        'datacleaning_tresh': ''
     }
     config['preset4'] = {
         'id': 4,
@@ -671,7 +714,11 @@ else:
         'timeconvert_format': '',
         'marker_trace': '',
         'avg_on': '',
-        'avg_rollnum': ''
+        'avg_rollnum': '',
+        'datacleaning_on': '',
+        'datacleaning_show': '',
+        'datacleaning_keep': '',
+        'datacleaning_tresh': ''
     }
     config['preset5'] = {
         'id': 5,
@@ -683,7 +730,11 @@ else:
         'timeconvert_format': '',
         'marker_trace': '',
         'avg_on': '',
-        'avg_rollnum': ''
+        'avg_rollnum': '',
+        'datacleaning_on': '',
+        'datacleaning_show': '',
+        'datacleaning_keep': '',
+        'datacleaning_tresh': ''
     }
     config['preset6'] = {
         'id': 6,
@@ -695,7 +746,11 @@ else:
         'timeconvert_format': '',
         'marker_trace': '',
         'avg_on': '',
-        'avg_rollnum': ''
+        'avg_rollnum': '',
+        'datacleaning_on': '',
+        'datacleaning_show': '',
+        'datacleaning_keep': '',
+        'datacleaning_tresh': ''
     }
 
     with open('presets.ini', 'w', encoding='utf-8') as config_file:

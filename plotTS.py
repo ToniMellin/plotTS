@@ -117,7 +117,7 @@ def addAverageData(df, y_List, y2_List, average_rollNum):
         pTS_logger.critical('%s', e)
         pTS_logger.exception('Issue averaging data')
     
-#data cleaning function, to remove empty-valued or NaN valued rows
+#data cleaning function, to remove empty-valued or NaN valued rows, outputs cleaned dataframe and dataframe of cleaned rows
 def cleanData(df, treshold_ON, threshold_num, columns_list):
     if treshold_ON == True:
         df_clean = df.dropna(tresh=threshold_num, subset=columns_list)
