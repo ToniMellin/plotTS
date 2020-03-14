@@ -118,16 +118,23 @@ def addAverageData(df, y_List, y2_List, average_rollNum):
         pTS_logger.exception('Issue averaging data')
     
 #data cleaning function, to remove empty-valued or NaN valued rows, outputs cleaned dataframe and dataframe of cleaned rows
-def cleanData(df, treshold_ON, threshold_num, columns_list):
-    if treshold_ON == True:
-        df_clean = df.dropna(tresh=threshold_num, subset=columns_list)
+def cleanData(df, columns_list, show_dropped_ON, export_ON, inputfilename):
+    
+    #Clean out rows with empty or NaN values in given columns
+    df_clean = df.dropna(subset=columns_list)
+    
+    if show_dropped_ON == True:
+        df_dropped = df.loc[pd.isnull(df[columns_list]).any(axis=1)]
     else:
-        df_clean = df.dropna(subset=columns_list)
+        df_dropped = pd.DataFrame(index = ['Empty'])
+    if export_ON == True:
+        splitted_inputfile = inputfilename.split('.')
+        if splitted_inputfile[1] == "csv":
+            df_clean.to_csv(index=False, path_or_buf='{}.csv'.format(splitted_inputfile[0]))
+        else:
+            df_clean.to_excel(index=False, path_or_buf='{}.xlsx'.format(splitted_inputfile[0]))
 
-    #TODO check https://stackoverflow.com/questions/17095101/outputting-difference-in-two-pandas-dataframes-side-by-side-highlighting-the-d if that is enough
-    df_removed = df
-
-    return df_clean, df_removed
+    return df_clean, df_dropped
 
 
 #creates the dictionary key for plotEngine to use as figure building instructions

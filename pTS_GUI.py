@@ -36,6 +36,7 @@ def findPresetID(name):
     return False
 
 #TODO add data cleaning options
+#TODO add axis naming
 #collect and change preset values in config and then save the presets to preset.ini
 def changePresetValues(oldName, newName):
     preset_id = int(findPresetID(oldName))
@@ -76,12 +77,9 @@ def changePresetValues(oldName, newName):
         dataclean_show_tick = ui.getCheckBox('cleandata_show')
         ui.debug('data cleaning show tick is %s', dataclean_show_tick)
         config.set(presetSec, 'datacleaning_show', str(dataclean_show_tick))
-        dataclean_keep_tick = ui.getCheckBox('cleandata_keep')
-        ui.debug('data cleaning keep tick is %s', dataclean_keep_tick)
-        config.set(presetSec, 'datacleaning_keep', str(dataclean_keep_tick))
-        dataclean_rollNum = ui.getSpinBox('cleandata_tresh')
-        ui.debug('data cleaning treshold: %s', dataclean_rollNum)
-        config.set(presetSec, 'datacleaning_tresh', dataclean_rollNum)
+        dataclean_export_tick = ui.getCheckBox('cleandata_export')
+        ui.debug('data cleaning export tick is %s', dataclean_export_tick)
+        config.set(presetSec, 'datacleaning_export', str(dataclean_export_tick))
         writeToConfig() #save config
         #change UI preset naming
         ui.renameOptionBoxItem('Preset:', oldName, newName, callFunction=False)
@@ -97,8 +95,7 @@ def changePresetValues(oldName, newName):
         ui.info('Preset %(pres)s average rolling number changed to -> %(avgRollInfo)s', {'pres': presetSec, 'avgRollInfo': average_rollNum})
         ui.info('Preset %(pres)s data cleaning mode changed to -> %(cleanMode)s', {'pres': presetSec, 'cleanMode': datacleanButton})
         ui.info('Preset %(pres)s data cleaning show changed to -> %(cleanShow)s', {'pres': presetSec, 'cleanShow': dataclean_show_tick})
-        ui.info('Preset %(pres)s data cleaning keep changed to -> %(cleanKeep)s', {'pres': presetSec, 'cleanKeep': dataclean_keep_tick})
-        ui.info('Preset %(pres)s data cleaning treshold changed to -> %(cleanTresh)s', {'pres': presetSec, 'cleanTresh': dataclean_rollNum})
+        ui.info('Preset %(pres)s data cleaning keep changed to -> %(cleanKeep)s', {'pres': presetSec, 'cleanKeep': dataclean_export_tick})
         ui.info('Preset %s saved', presetSec)
         ui.queueFunction(ui.setLabel, 'output', 'Saved preset: {}'.format(newName))
         ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
@@ -220,12 +217,9 @@ def loadPresetSettings(presetName):
             dataClean_SHOW = config[presetSec].get('datacleaning_show')
             ui.setCheckBox("cleandata_show", ticked=str2bool(dataClean_SHOW), callFunction=True)
             ui.debug('set data cleaning show to %s', dataClean_SHOW)
-            dataClean_KEEP = config[presetSec].get('datacleaning_keep')
-            ui.setCheckBox("cleandata_keep", ticked=str2bool(dataClean_KEEP), callFunction=True)
-            ui.debug('set data cleaning keeping to %s', dataClean_KEEP)
-            dataClean_TRESH = config[presetSec].get('datacleaning_tresh')
-            ui.setSpinBox('cleandata_tresh', int(dataClean_TRESH), callFunction=True)
-            ui.debug('set average rolling as %s', dataClean_TRESH)
+            dataClean_EXPORT = config[presetSec].get('datacleaning_export')
+            ui.setCheckBox("cleandata_export", ticked=str2bool(dataClean_EXPORT), callFunction=True)
+            ui.debug('set data cleaning keeping to %s', dataClean_EXPORT)
             #set outputs after loading all settings
             ui.info('Preset %(pres)s loaded as %(name)s', {'pres': presetSec, 'name': presetName})
             ui.queueFunction(ui.setLabel, 'output', 'Loaded preset: {}'.format(presetName))
@@ -306,7 +300,7 @@ def externalDrop(data):
     ui.info('Data drop used: %s', ofile)
     ui.setEntry('file', ofile, callFunction=True)
 
-#TODO add data cleaning options
+#TODO add data cleaning functionality
 #button press actions
 def press(btn):
     ui.info('User pressed --> %s', btn)
@@ -608,10 +602,7 @@ ui.startFrame('CleanData_3', row=4, column=2, colspan=2)
 ui.addNamedCheckBox("Show cleaned data rows in a pop-up", 'cleandata_show')
 ui.stopFrame()
 ui.startFrame('CleanData_4', row=5, column=0, colspan=2)
-ui.addNamedCheckBox("Keep row if non-empty values equal to or more than:", 'cleandata_keep')
-ui.stopFrame()
-ui.startFrame('CleanData_5', row=5, column=2, colspan=1)
-ui.addSpinBoxRange("cleandata_tresh", 1, 100)
+ui.addNamedCheckBox("Save a cleaned copy of the input file", 'cleandata_export')
 ui.stopFrame()
 ui.stopLabelFrame()
 #empty label that squishes the settings above more together
@@ -669,8 +660,7 @@ else:
         'avg_rollnum': '',
         'datacleaning_on': '',
         'datacleaning_show': '',
-        'datacleaning_keep': '',
-        'datacleaning_tresh': ''
+        'datacleaning_export': ''
     }
     config['preset2'] = {
         'id': 2,
@@ -685,8 +675,7 @@ else:
         'avg_rollnum': '',
         'datacleaning_on': '',
         'datacleaning_show': '',
-        'datacleaning_keep': '',
-        'datacleaning_tresh': ''
+        'datacleaning_export': ''
     }
     config['preset3'] = {
         'id': 3,
@@ -701,8 +690,7 @@ else:
         'avg_rollnum': '',
         'datacleaning_on': '',
         'datacleaning_show': '',
-        'datacleaning_keep': '',
-        'datacleaning_tresh': ''
+        'datacleaning_export': ''
     }
     config['preset4'] = {
         'id': 4,
@@ -717,8 +705,7 @@ else:
         'avg_rollnum': '',
         'datacleaning_on': '',
         'datacleaning_show': '',
-        'datacleaning_keep': '',
-        'datacleaning_tresh': ''
+        'datacleaning_export': ''
     }
     config['preset5'] = {
         'id': 5,
@@ -733,8 +720,7 @@ else:
         'avg_rollnum': '',
         'datacleaning_on': '',
         'datacleaning_show': '',
-        'datacleaning_keep': '',
-        'datacleaning_tresh': ''
+        'datacleaning_export': ''
     }
     config['preset6'] = {
         'id': 6,
@@ -749,8 +735,7 @@ else:
         'avg_rollnum': '',
         'datacleaning_on': '',
         'datacleaning_show': '',
-        'datacleaning_keep': '',
-        'datacleaning_tresh': ''
+        'datacleaning_export': ''
     }
 
     with open('presets.ini', 'w', encoding='utf-8') as config_file:
