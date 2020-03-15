@@ -95,7 +95,7 @@ def changePresetValues(oldName, newName):
         ui.info('Preset %(pres)s average rolling number changed to -> %(avgRollInfo)s', {'pres': presetSec, 'avgRollInfo': average_rollNum})
         ui.info('Preset %(pres)s data cleaning mode changed to -> %(cleanMode)s', {'pres': presetSec, 'cleanMode': datacleanButton})
         ui.info('Preset %(pres)s data cleaning show changed to -> %(cleanShow)s', {'pres': presetSec, 'cleanShow': dataclean_show_tick})
-        ui.info('Preset %(pres)s data cleaning keep changed to -> %(cleanKeep)s', {'pres': presetSec, 'cleanKeep': dataclean_export_tick})
+        ui.info('Preset %(pres)s data cleaning export changed to -> %(cleanExport)s', {'pres': presetSec, 'cleanKeep': dataclean_export_tick})
         ui.info('Preset %s saved', presetSec)
         ui.queueFunction(ui.setLabel, 'output', 'Saved preset: {}'.format(newName))
         ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
@@ -268,6 +268,9 @@ def loadPlotSettings():
         trace_mode_id = convertTraceModeToID(trace_mode)
         averageButton = ui.getRadioButton('average')
         average_rollNum = ui.getSpinBox('average_rollNum')
+        cleanButton = ui.getRadioButton('cleandata')
+        showCleaned = ui.getCheckBox('cleandata_show')
+        exportCleaned = ui.getCheckBox('cleandata_export')
         if averageButton == 'On':
             averageMode = True
             y_keyList = []
@@ -284,7 +287,7 @@ def loadPlotSettings():
             averageMode = False
             y_keyList = ''
             y2_keyList = ''
-        return x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, timeconvert_mode, timeconvert_format, trace_mode_id, averageMode, int(average_rollNum)
+        return x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, timeconvert_mode, timeconvert_format, trace_mode_id, averageMode, int(average_rollNum), cleanButton, showCleaned, exportCleaned
     except Exception as e:
         ui.critical('%s', e)
         ui.error('ERROR!! Cannot retrieve settings for plotting!')
@@ -309,7 +312,16 @@ def press(btn):
         try:
             ifile2 = ui.getEntry('file')
             df_inputfile = pTS.inputFiletoDF(ifile2)
-            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num = loadPlotSettings()
+            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num, data_clean, show_clean, save_clean = loadPlotSettings()
+            if data_clean == 'On':
+                check_columns = []
+                check_columns.extend(x_items)
+                check_columns.extend(y_items)
+                check_columns.extend(y2_items)
+                df_cleaned, df_drop = pTS.cleanData(df_inputfile, check_columns, show_clean, save_clean, ifile2)
+                df_inputfile = df_cleaned
+                if show_clean == True:
+                    ui.infoBox('Dropped rows!!', df_drop.to_string(), parent=None)                  
             if time_mode == 'Auto':
                 try:
                     df2 = pTS.autoConvertTimeValues(df_inputfile, x_items[0])
@@ -379,7 +391,16 @@ def press(btn):
         try:
             ifile2 = ui.getEntry('file')
             df_inputfile = pTS.inputFiletoDF(ifile2)
-            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num = loadPlotSettings()
+            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num, data_clean, show_clean, save_clean = loadPlotSettings()
+            if data_clean == 'On':
+                check_columns = []
+                check_columns.extend(x_items)
+                check_columns.extend(y_items)
+                check_columns.extend(y2_items)
+                df_cleaned, df_drop = pTS.cleanData(df_inputfile, check_columns, show_clean, save_clean, ifile2)
+                df_inputfile = df_cleaned
+                if show_clean == True:
+                    ui.infoBox('Dropped rows!!', df_drop.to_string(), parent=None)
             if time_mode == 'Auto':
                 try:
                     df2 = pTS.autoConvertTimeValues(df_inputfile, x_items[0])

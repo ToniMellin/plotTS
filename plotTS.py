@@ -118,7 +118,7 @@ def addAverageData(df, y_List, y2_List, average_rollNum):
         pTS_logger.exception('Issue averaging data')
     
 #data cleaning function, to remove empty-valued or NaN valued rows, outputs cleaned dataframe and dataframe of cleaned rows
-def cleanData(df, columns_list, show_dropped_ON, export_ON, inputfilename):
+def cleanData(df, columns_list, show_dropped_ON, export_ON, inputfilepath):
     
     #Clean out rows with empty or NaN values in given columns
     df_clean = df.dropna(subset=columns_list)
@@ -128,11 +128,11 @@ def cleanData(df, columns_list, show_dropped_ON, export_ON, inputfilename):
     else:
         df_dropped = pd.DataFrame(index = ['Empty'])
     if export_ON == True:
-        splitted_inputfile = inputfilename.split('.')
+        splitted_inputfile = inputfilepath.split('.')
         if splitted_inputfile[1] == "csv":
-            df_clean.to_csv(index=False, path_or_buf='{}.csv'.format(splitted_inputfile[0]))
+            df_clean.to_csv(index=False, path_or_buf='{}.csv'.format(inputfilepath[0]))
         else:
-            df_clean.to_excel(index=False, path_or_buf='{}.xlsx'.format(splitted_inputfile[0]))
+            df_clean.to_excel(index=False, path_or_buf='{}.xlsx'.format(inputfilepath[0]))
 
     return df_clean, df_dropped
 
@@ -180,7 +180,6 @@ def plotEngine(fig, plotDict, X_axis, df):
                                         mode=pMode,
                                         name=pName),secondary_y=True,)
 
-#TODO add dataclean for given parameters
 #createFig creates a figure from the data and displays the figure
 def createFig(sec_y, plotDict, x_axis, df):
     #debug messages before plotting
@@ -195,7 +194,6 @@ def createFig(sec_y, plotDict, x_axis, df):
     fig.show()
     pTS_logger.debug('Showing plot')
 
-#TODO add dataclean for given parameters
 #saveFigAsHTML works the same as createFig, except it produces a HTML file with all the data plotted
 def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name_path):
     #debug messages before plotting
