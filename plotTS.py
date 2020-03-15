@@ -130,9 +130,9 @@ def cleanData(df, columns_list, show_dropped_ON, export_ON, inputfilepath):
     if export_ON == True:
         splitted_inputfile = inputfilepath.split('.')
         if splitted_inputfile[1] == "csv":
-            df_clean.to_csv(index=False, path_or_buf='{}.csv'.format(inputfilepath[0]))
+            df_clean.to_csv(index=False, path_or_buf='{}_clean.csv'.format(splitted_inputfile[0]))
         else:
-            df_clean.to_excel(index=False, path_or_buf='{}.xlsx'.format(inputfilepath[0]))
+            df_clean.to_excel(index=False, path_or_buf='{}_clean.xlsx'.format(inputfilepath[0]))
 
     return df_clean, df_dropped
 
