@@ -321,9 +321,10 @@ def press(btn):
                 df_cleaned, df_drop = pTS.cleanData(df_inputfile, check_columns, show_clean, save_clean, ifile2)
                 df_inputfile = df_cleaned
                 if show_clean == True:
-                    drop_str = df_drop.to_string()
+                    df_drop_first_ten = df_drop.head(10)
+                    drop_str = df_drop_first_ten.to_string()
                     drop_rowcount = str(len(df_drop.index))
-                    ui.infoBox('Dropped rows!!', 'Number of rows dropped: {}\n\n{}'.format(drop_rowcount, drop_str), parent=None)                  
+                    ui.infoBox('Dropped rows!!', 'Number of rows dropped: {}\n\nShowing first 10 dropped rows:\n{}\n...'.format(drop_rowcount, drop_str), parent=None)                  
             if time_mode == 'Auto':
                 try:
                     df2 = pTS.autoConvertTimeValues(df_inputfile, x_items[0])
@@ -402,7 +403,10 @@ def press(btn):
                 df_cleaned, df_drop = pTS.cleanData(df_inputfile, check_columns, show_clean, save_clean, ifile2)
                 df_inputfile = df_cleaned
                 if show_clean == True:
-                    ui.infoBox('Dropped rows!!', df_drop.to_string(), parent=None)
+                    df_drop_first_ten = df_drop.head(10)
+                    drop_str = df_drop_first_ten.to_string()
+                    drop_rowcount = str(len(df_drop.index))
+                    ui.infoBox('Dropped rows!!', 'Number of rows dropped: {}\n\nShowing first 10 dropped rows:\n{}\n...'.format(drop_rowcount, drop_str), parent=None)
             if time_mode == 'Auto':
                 try:
                     df2 = pTS.autoConvertTimeValues(df_inputfile, x_items[0])
