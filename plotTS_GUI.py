@@ -35,7 +35,7 @@ def findPresetID(name):
     ui.queueFunction(ui.setLabelBg, 'output', 'red')
     return False
 
-#TODO add axis naming
+#TODO add title & suffix presets
 #collect and change preset values in config and then save the presets to preset.ini
 def changePresetValues(oldName, newName):
     preset_id = int(findPresetID(oldName))
@@ -123,6 +123,7 @@ def checkIfPresetDataEmpty(presetSec):
 def str2bool(v):
   return v.lower() in ("True", "true", "t", "1")
 
+#TODO add title & suffix presets
 #load preset settings
 def loadPresetSettings(presetName):
     preset_id = int(findPresetID(presetName))
@@ -244,6 +245,7 @@ def convertTraceModeToID(trace_mode):
         trace_mode_id = 3
     return trace_mode_id
 
+#TODO add title & suffixes
 #loading plot settings from UI to generate the plot
 def loadPlotSettings():
     ui.info('Retrieving plotting settings')
@@ -302,6 +304,7 @@ def externalDrop(data):
     ui.info('Data drop used: %s', ofile)
     ui.setEntry('file', ofile, callFunction=True)
 
+#TODO add title & suffixes data
 #button press actions
 def press(btn):
     ui.info('User pressed --> %s', btn)
@@ -629,8 +632,33 @@ ui.startFrame('CleanData_4', row=5, column=0, colspan=2)
 ui.addNamedCheckBox("Save a cleaned copy of the input file", 'cleandata_export')
 ui.stopFrame()
 ui.stopLabelFrame()
+ui.startLabelFrame('Titles')
+ui.startFrame('Axis_options_1', row=6, column=0, colspan=2)
+ui.addLabelEntry('Title:')
+ui.stopFrame()
+ui.startFrame('Axis_options_2', row=6, column=2, colspan=2)
+ui.addLabelEntry('X-Axis Title:')
+ui.stopFrame()
+ui.startFrame('Axis_options_3', row=7, column=0, colspan=2)
+ui.addLabelEntry('Y-Axis Title:')
+ui.stopFrame()
+ui.startFrame('Axis_options_4', row=7, column=2, colspan=2)
+ui.addLabelEntry('Y2-Axis Title:')
+ui.stopFrame()
+ui.stopLabelFrame()
+ui.startLabelFrame('Tick suffixes (units)')
+ui.startFrame('suffix_options_1', row=8, column=0, colspan=2)
+ui.addLabelEntry('X-Axis suffix:')
+ui.stopFrame()
+ui.startFrame('suffix_options_2', row=9, column=0, colspan=2)
+ui.addLabelEntry('Y-Axis suffix:')
+ui.stopFrame()
+ui.startFrame('suffix_options_3', row=9, column=2, colspan=2)
+ui.addLabelEntry('Y2-Axis suffix:')
+ui.stopFrame()
+ui.stopLabelFrame()
 #empty label that squishes the settings above more together
-ui.addLabel('Emptylabel', '\n\n', row=5, colspan=3, rowspan=2)
+#ui.addLabel('Emptylabel', '\n', row=5, colspan=3, rowspan=2)
 ui.stopTab() #End settings tab
 
 ##About TAB
@@ -648,6 +676,7 @@ ui.stopTabbedFrame() #END tabbing
 ui.startFrame('Bottom', row=3, column=0, colspan=3)
 ui.setBg('ghost white')
 
+#TODO add title & suffix presets
 #importing presets OR creating default preset file if missing
 config = ConfigParser(strict=False, interpolation=None)#interpolation none to avoid interpolation error from datetime format
 presetNameValues = []
