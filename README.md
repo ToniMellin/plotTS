@@ -21,6 +21,7 @@ pip install -r requirements.txt
 ### 1.4.0
 - Possibility to drop data rows that have empty-values or NaN values (only effects columns selected to be used in plotting)
 - Choice to show pop-up listing of dropped rows
+- Choice to save a "cleaned" copy of input file without removed rows
 
 ### 1.3.0 / 1.3.1
 - Save plot as HTML file location selection
@@ -51,7 +52,7 @@ pip install -r requirements.txt
 ### GUI usage
 
 #### Basic usage
-Start using by running pTS_GUI.py
+Start using by running plotTS_GUI.py (before 1.4.0 it used to be pTS_GUI.py)
 
 Give a file location by dragging and dropping to the "blue" area or select by pressing 'File'
 

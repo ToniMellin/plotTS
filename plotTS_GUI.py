@@ -35,7 +35,6 @@ def findPresetID(name):
     ui.queueFunction(ui.setLabelBg, 'output', 'red')
     return False
 
-#TODO add data cleaning options
 #TODO add axis naming
 #collect and change preset values in config and then save the presets to preset.ini
 def changePresetValues(oldName, newName):
@@ -303,7 +302,6 @@ def externalDrop(data):
     ui.info('Data drop used: %s', ofile)
     ui.setEntry('file', ofile, callFunction=True)
 
-#TODO add data cleaning functionality
 #button press actions
 def press(btn):
     ui.info('User pressed --> %s', btn)
@@ -564,7 +562,6 @@ ui.stopLabelFrame()
 ui.stopFrame()
 ui.stopTab() #End General Tab
 
-#TODO add dropna parameters options (On/off, row/column, threshold..)
 ##Settings TAB
 ui.startTab("Settings")
 #Time convert settings
