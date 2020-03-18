@@ -355,7 +355,7 @@ def press(btn):
                 except Exception as e:
                     ui.critical('%s', e)
                     ui.error('ERROR!! Cannot create dictionary for plotting!!!')
-            pTS.createFig(sec_y, plotDict, df2[x_items[0]], df2)
+            pTS.createFig(sec_y, plotDict, df2[x_items[0]], df2, ['', '', '', ''], ['', '', ''])
             ui.info('Plotting figure completed!')
             ui.queueFunction(ui.setLabel, 'output', 'Plotting figure completed!')
             ui.queueFunction(ui.setLabelBg, 'output', 'green')
@@ -437,7 +437,7 @@ def press(btn):
                 except Exception as e:
                     ui.critical('%s', e)
                     ui.error('ERROR!! Cannot create dictionary for plotting!!!')
-            pTS.saveFigAsHTML(sec_y, plotDict, df2[x_items[0]], df2, os.path.join(save_location, HTML_name))
+            pTS.saveFigAsHTML(sec_y, plotDict, df2[x_items[0]], df2, os.path.join(save_location, HTML_name), ['', '', '', ''], ['', '', ''])
             ui.info('Saving figure as HTML completed!')
             ui.queueFunction(ui.setLabel, 'output', 'Saving figure as HTML completed!')
             ui.queueFunction(ui.setLabelBg, 'output', 'green')
