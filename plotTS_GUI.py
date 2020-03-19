@@ -289,7 +289,6 @@ def convertTraceModeToID(trace_mode):
         trace_mode_id = 3
     return trace_mode_id
 
-#TODO add title & suffixes
 #loading plot settings from UI to generate the plot
 def loadPlotSettings():
     ui.info('Retrieving plotting settings')
@@ -359,56 +358,60 @@ def externalDrop(data):
     ui.info('Data drop used: %s', ofile)
     ui.setEntry('file', ofile, callFunction=True)
 
+def plotPreparations():
+    ifile2 = ui.getEntry('file')
+    df_inputfile = pTS.inputFiletoDF(ifile2)
+    x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num, data_clean, show_clean, save_clean, titles_all, suffixes_all = loadPlotSettings()
+    if data_clean == 'On':
+        check_columns = []
+        check_columns.extend(x_items)
+        check_columns.extend(y_items)
+        check_columns.extend(y2_items)
+        df_cleaned, df_drop = pTS.cleanData(df_inputfile, check_columns, show_clean, save_clean, ifile2)
+        df_inputfile = df_cleaned
+        if show_clean == True:
+            df_drop_first_ten = df_drop.head(10)
+            drop_str = tabulate(df_drop_first_ten, headers='keys', tablefmt='psql')
+            drop_rowcount = str(len(df_drop.index))
+            ui.infoBox('Dropped rows!!', 'Number of rows dropped: {}\n\nShowing first 10 dropped rows:\n{}\n...'.format(drop_rowcount, drop_str), parent=None)                  
+    if time_mode == 'Auto':
+        try:
+            df2 = pTS.autoConvertTimeValues(df_inputfile, x_items[0])
+        except Exception as e:
+            ui.critical('%s', e)
+            ui.error('ERROR!! Auto Correction for timestamps not possible!!!')
+            raise ValueError('Could not convert timestamp automatically!!')
+    if time_mode == 'Manual':
+        try:
+            df2 = pTS.convertTimeValues(df_inputfile, x_items[0], time_format)
+        except Exception as e:
+            ui.critical('%s', e)
+            ui.error('ERROR!! Manual Correction for timestamps not possible!!!')
+            raise ValueError('Could not convert timestamp automatically!!')
+    else:
+        df2 = df_inputfile
+    if averageMode == True:
+        df2 = pTS.addAverageData(df2, y_items, y2_items, average_Num) #add average curves with the function
+        try:
+            plotDict = pTS.createPlotDict(df2, y_keyList, y2_keyList, trace_mode_id)
+        except Exception as e:
+            ui.critical('%s', e)
+            ui.error('ERROR!! Cannot create dictionary for plotting including the averaging!!!')
+    else:
+        try:
+            plotDict = pTS.createPlotDict(df2, y_items, y2_items, trace_mode_id)
+        except Exception as e:
+            ui.critical('%s', e)
+            ui.error('ERROR!! Cannot create dictionary for plotting!!!')
+    return sec_y, plotDict, x_items, df2, titles_all, suffixes_all
+
 #button press actions
 def press(btn):
     ui.info('User pressed --> %s', btn)
     if btn == 'Plot':
         #plot the data based on given datafile, axis options and settings
         try:
-            ifile2 = ui.getEntry('file')
-            df_inputfile = pTS.inputFiletoDF(ifile2)
-            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num, data_clean, show_clean, save_clean, titles_all, suffixes_all = loadPlotSettings()
-            if data_clean == 'On':
-                check_columns = []
-                check_columns.extend(x_items)
-                check_columns.extend(y_items)
-                check_columns.extend(y2_items)
-                df_cleaned, df_drop = pTS.cleanData(df_inputfile, check_columns, show_clean, save_clean, ifile2)
-                df_inputfile = df_cleaned
-                if show_clean == True:
-                    df_drop_first_ten = df_drop.head(10)
-                    drop_str = tabulate(df_drop_first_ten, headers='keys', tablefmt='psql')
-                    drop_rowcount = str(len(df_drop.index))
-                    ui.infoBox('Dropped rows!!', 'Number of rows dropped: {}\n\nShowing first 10 dropped rows:\n{}\n...'.format(drop_rowcount, drop_str), parent=None)                  
-            if time_mode == 'Auto':
-                try:
-                    df2 = pTS.autoConvertTimeValues(df_inputfile, x_items[0])
-                except Exception as e:
-                    ui.critical('%s', e)
-                    ui.error('ERROR!! Auto Correction for timestamps not possible!!!')
-                    raise ValueError('Could not convert timestamp automatically!!')
-            if time_mode == 'Manual':
-                try:
-                    df2 = pTS.convertTimeValues(df_inputfile, x_items[0], time_format)
-                except Exception as e:
-                    ui.critical('%s', e)
-                    ui.error('ERROR!! Manual Correction for timestamps not possible!!!')
-                    raise ValueError('Could not convert timestamp automatically!!')
-            else:
-                df2 = df_inputfile
-            if averageMode == True:
-                df2 = pTS.addAverageData(df2, y_items, y2_items, average_Num) #add average curves with the function
-                try:
-                    plotDict = pTS.createPlotDict(df2, y_keyList, y2_keyList, trace_mode_id)
-                except Exception as e:
-                    ui.critical('%s', e)
-                    ui.error('ERROR!! Cannot create dictionary for plotting including the averaging!!!')
-            else:
-                try:
-                    plotDict = pTS.createPlotDict(df2, y_items, y2_items, trace_mode_id)
-                except Exception as e:
-                    ui.critical('%s', e)
-                    ui.error('ERROR!! Cannot create dictionary for plotting!!!')
+            sec_y, plotDict, x_items, df2, titles_all, suffixes_all = plotPreparations()
             pTS.createFig(sec_y, plotDict, df2[x_items[0]], df2, titles_all, suffixes_all)
             ui.info('Plotting figure completed!')
             ui.queueFunction(ui.setLabel, 'output', 'Plotting figure completed!')
@@ -447,50 +450,7 @@ def press(btn):
             else:
                 HTML_name = HTML_entry     
         try:
-            ifile2 = ui.getEntry('file')
-            df_inputfile = pTS.inputFiletoDF(ifile2)
-            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num, data_clean, show_clean, save_clean, titles_all, suffixes_all = loadPlotSettings()
-            if data_clean == 'On':
-                check_columns = []
-                check_columns.extend(x_items)
-                check_columns.extend(y_items)
-                check_columns.extend(y2_items)
-                df_cleaned, df_drop = pTS.cleanData(df_inputfile, check_columns, show_clean, save_clean, ifile2)
-                df_inputfile = df_cleaned
-                if show_clean == True:
-                    df_drop_first_ten = df_drop.head(10)
-                    drop_str = tabulate(df_drop_first_ten, headers='keys', tablefmt='psql')
-                    drop_rowcount = str(len(df_drop.index))
-                    ui.infoBox('Dropped rows!!', 'Number of rows dropped: {}\n\nShowing first 10 dropped rows:\n{}\n...'.format(drop_rowcount, drop_str), parent=None)
-            if time_mode == 'Auto':
-                try:
-                    df2 = pTS.autoConvertTimeValues(df_inputfile, x_items[0])
-                except Exception as e:
-                    ui.critical('%s', e)
-                    ui.error('ERROR!! Auto Correction for timestamps not possible!!!')
-                    raise Exception('%s', e)
-            if time_mode == 'Manual':
-                try:
-                    df2 = pTS.convertTimeValues(df_inputfile, x_items[0], time_format)
-                except Exception as e:
-                    ui.critical('%s', e)
-                    ui.error('ERROR!! Manual Correction for timestamps not possible!!!')
-                    raise Exception('%s', e)
-            else:
-                df2 = df_inputfile
-            if averageMode == True:
-                df2 = pTS.addAverageData(df2, y_items, y2_items, average_Num) #add average curves with the function
-                try:
-                    plotDict = pTS.createPlotDict(df2, y_keyList, y2_keyList, trace_mode_id)
-                except Exception as e:
-                    ui.critical('%s', e)
-                    ui.error('ERROR!! Cannot create dictionary for plotting including the averaging!!!')
-            else:
-                try:
-                    plotDict = pTS.createPlotDict(df2, y_items, y2_items, trace_mode_id)
-                except Exception as e:
-                    ui.critical('%s', e)
-                    ui.error('ERROR!! Cannot create dictionary for plotting!!!')
+            sec_y, plotDict, x_items, df2, titles_all, suffixes_all = plotPreparations()
             pTS.saveFigAsHTML(sec_y, plotDict, df2[x_items[0]], df2, os.path.join(save_location, HTML_name), titles_all, suffixes_all)
             ui.info('Saving figure as HTML completed!')
             ui.queueFunction(ui.setLabel, 'output', 'Saving figure as HTML completed!')

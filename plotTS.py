@@ -192,7 +192,7 @@ def createFig(sec_y, plotDict, x_axis, df, titles, suffixes):
     plotEngine(fig, plotDict, x_axis, df)
 
     fig.update_layout(
-                        showlegend=False,
+                        showlegend=True,
                         title=titles[0],
                         title_x=0.5,
                         xaxis_title=titles[1],
@@ -217,7 +217,7 @@ def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name_path, titles, suffixes)
     plotEngine(fig, plotDict, x_axis, df)
 
     fig.update_layout(
-                        showlegend=False,
+                        showlegend=True,
                         title=titles[0],
                         title_x=0.5,
                         xaxis_title=titles[1],
