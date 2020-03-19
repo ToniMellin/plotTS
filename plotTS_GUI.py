@@ -358,6 +358,7 @@ def externalDrop(data):
     ui.info('Data drop used: %s', ofile)
     ui.setEntry('file', ofile, callFunction=True)
 
+#generates most of needed data and preparations needed for plotting and save as html from GUI parts
 def plotPreparations():
     ifile2 = ui.getEntry('file')
     df_inputfile = pTS.inputFiletoDF(ifile2)
@@ -373,7 +374,7 @@ def plotPreparations():
             df_drop_first_ten = df_drop.head(10)
             drop_str = tabulate(df_drop_first_ten, headers='keys', tablefmt='psql')
             drop_rowcount = str(len(df_drop.index))
-            ui.infoBox('Dropped rows!!', 'Number of rows dropped: {}\n\nShowing first 10 dropped rows:\n{}\n...'.format(drop_rowcount, drop_str), parent=None)                  
+            ui.infoBox('Dropped rows!!', 'Number of rows dropped: {}\n\nShowing first 10 dropped rows:\n{}\n'.format(drop_rowcount, drop_str), parent=None)                  
     if time_mode == 'Auto':
         try:
             df2 = pTS.autoConvertTimeValues(df_inputfile, x_items[0])
