@@ -1,7 +1,7 @@
 # plotTS
 Easy plotting GUI to use plotly in creating plots from data files (.csv or .xlsx)
 
-![image](https://user-images.githubusercontent.com/55407190/72760590-fc03a880-3be1-11ea-8c43-d6b72c1104f2.png)
+![image](https://user-images.githubusercontent.com/55407190/77053852-9eb88780-69d7-11ea-8358-af7c35a03798.png)
 
 ![example](https://user-images.githubusercontent.com/55407190/71592026-417b0b80-2b37-11ea-97d3-f90072f71c21.png)
 
@@ -20,8 +20,9 @@ pip install -r requirements.txt
 
 ### 1.4.0
 - Possibility to drop data rows that have empty-values or NaN values (only effects columns selected to be used in plotting)
-- Choice to show pop-up listing of dropped rows
-- Choice to save a "cleaned" copy of input file without removed rows
+- Option to show pop-up listing of dropped rows
+- Option to save a "cleaned" copy of input file without removed rows
+- Possibility to add titles and suffixes (units) to axis
 
 ### 1.3.0 / 1.3.1
 - Save plot as HTML file location selection
@@ -79,6 +80,8 @@ Press Save As HTML
 
 #### Settings
 Go to settings tab
+
+![image](https://user-images.githubusercontent.com/55407190/77054059-ed662180-69d7-11ea-849f-6b032386eafc.png)
 
 Select any wanted options:
 - Convert x-axis time to datetime (will try to convert selected x-axis)

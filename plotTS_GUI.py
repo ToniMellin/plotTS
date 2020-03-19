@@ -35,7 +35,6 @@ def findPresetID(name):
     ui.queueFunction(ui.setLabelBg, 'output', 'red')
     return False
 
-#TODO add title & suffix presets
 #collect and change preset values in config and then save the presets to preset.ini
 def changePresetValues(oldName, newName):
     preset_id = int(findPresetID(oldName))
@@ -64,12 +63,14 @@ def changePresetValues(oldName, newName):
         trace_conf = str(trace_mode_id)
         config.set(presetSec, 'marker_trace', trace_conf)
         ui.debug('trace_mode_id: %s', trace_conf)
+        #Averaging settings
         averageButton = ui.getRadioButton('average')
         ui.debug('average button is %s', averageButton)
         config.set(presetSec, 'avg_on', averageButton)
         average_rollNum = ui.getSpinBox('average_rollNum')
         ui.debug('average roll num: %s', average_rollNum)
         config.set(presetSec, 'avg_rollnum', average_rollNum)
+        #Data cleaning settings
         datacleanButton = ui.getRadioButton('cleandata')
         ui.debug('data cleaning button is %s', datacleanButton)
         config.set(presetSec, 'datacleaning_on', datacleanButton)
@@ -79,6 +80,26 @@ def changePresetValues(oldName, newName):
         dataclean_export_tick = ui.getCheckBox('cleandata_export')
         ui.debug('data cleaning export tick is %s', dataclean_export_tick)
         config.set(presetSec, 'datacleaning_export', str(dataclean_export_tick))
+        #Titles & Suffixes
+        titles_list = ['', '', '', '']
+        titles_list[0] = ui.getEntry('Title:')
+        config.set(presetSec, 'title', titles_list[0])
+        titles_list[1] = ui.getEntry('X-Axis title:')
+        config.set(presetSec, 'x-axis-title', titles_list[1])
+        titles_list[2] = ui.getEntry('Y-Axis title:')
+        config.set(presetSec, 'y-axis-title', titles_list[2])
+        titles_list[3] = ui.getEntry('Y2-Axis title:')
+        config.set(presetSec, 'y2-axis-title', titles_list[3])
+        ui.debug('titles gathered: %s', titles_list)
+        suffixes_list = ['', '', '']
+        suffixes_list[0] = ui.getEntry('X-Axis suffix:')
+        config.set(presetSec, 'x-axis-suffix', suffixes_list[0])
+        suffixes_list[1] = ui.getEntry('Y-Axis suffix:')
+        config.set(presetSec, 'y-axis-suffix', suffixes_list[1])
+        suffixes_list[2] = ui.getEntry('Y2-Axis suffix:')
+        config.set(presetSec, 'y2-axis-suffix', suffixes_list[2])
+        ui.debug('suffixes gathered: %s', suffixes_list)
+        #Save config
         writeToConfig() #save config
         #change UI preset naming
         ui.renameOptionBoxItem('Preset:', oldName, newName, callFunction=False)
@@ -123,7 +144,6 @@ def checkIfPresetDataEmpty(presetSec):
 def str2bool(v):
   return v.lower() in ("True", "true", "t", "1")
 
-#TODO add title & suffix presets
 #load preset settings
 def loadPresetSettings(presetName):
     preset_id = int(findPresetID(presetName))
@@ -220,6 +240,29 @@ def loadPresetSettings(presetName):
             dataClean_EXPORT = config[presetSec].get('datacleaning_export')
             ui.setCheckBox("cleandata_export", ticked=str2bool(dataClean_EXPORT), callFunction=True)
             ui.debug('set data cleaning keeping to %s', dataClean_EXPORT)
+            #load and set titles settings
+            title_set = config[presetSec].get('title')
+            ui.setEntry("Title:", title_set, callFunction=True)
+            ui.debug('title set to %s', title_set)
+            x_axis_title_set = config[presetSec].get('x-axis-title')
+            ui.setEntry("X-Axis title:", x_axis_title_set, callFunction=True)
+            ui.debug('x-axis title set to %s', x_axis_title_set)
+            y_axis_title_set = config[presetSec].get('y-axis-title')
+            ui.setEntry("Y-Axis title:", y_axis_title_set, callFunction=True)
+            ui.debug('y-axis title set to %s', y_axis_title_set)
+            y2_axis_title_set = config[presetSec].get('y2-axis-title')
+            ui.setEntry("Y2-Axis title:", y2_axis_title_set, callFunction=True)
+            ui.debug('y2-axis title set to %s', y2_axis_title_set)
+            #load and set suffixes settings
+            x_axis_suffix_set = config[presetSec].get('x-axis-suffix')
+            ui.setEntry("X-Axis suffix:", x_axis_suffix_set, callFunction=True)
+            ui.debug('x-axis suffix set to %s', x_axis_suffix_set)
+            y_axis_suffix_set = config[presetSec].get('y-axis-suffix')
+            ui.setEntry("Y-Axis suffix:", y_axis_suffix_set, callFunction=True)
+            ui.debug('y-axis suffix set to %s', y_axis_suffix_set)
+            y2_axis_suffix_set = config[presetSec].get('y2-axis-suffix')
+            ui.setEntry("Y2-Axis suffix:", y2_axis_suffix_set, callFunction=True)
+            ui.debug('y2-axis suffix set to %s', y2_axis_suffix_set)
             #set outputs after loading all settings
             ui.info('Preset %(pres)s loaded as %(name)s', {'pres': presetSec, 'name': presetName})
             ui.queueFunction(ui.setLabel, 'output', 'Loaded preset: {}'.format(presetName))
@@ -272,6 +315,17 @@ def loadPlotSettings():
         cleanButton = ui.getRadioButton('cleandata')
         showCleaned = ui.getCheckBox('cleandata_show')
         exportCleaned = ui.getCheckBox('cleandata_export')
+        titles_all = ['', '', '', '']
+        titles_all[0] = ui.getEntry('Title:')
+        titles_all[1] = ui.getEntry('X-Axis title:')
+        titles_all[2] = ui.getEntry('Y-Axis title:')
+        titles_all[3] = ui.getEntry('Y2-Axis title:')
+        ui.debug('titles gathered: %s', titles_all)
+        suffixes_all = ['', '', '']
+        suffixes_all[0] = ui.getEntry('X-Axis suffix:')
+        suffixes_all[1] = ui.getEntry('Y-Axis suffix:')
+        suffixes_all[2] = ui.getEntry('Y2-Axis suffix:')
+        ui.debug('suffixes gathered: %s', suffixes_all)
         if averageButton == 'On':
             averageMode = True
             y_keyList = []
@@ -288,7 +342,7 @@ def loadPlotSettings():
             averageMode = False
             y_keyList = ''
             y2_keyList = ''
-        return x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, timeconvert_mode, timeconvert_format, trace_mode_id, averageMode, int(average_rollNum), cleanButton, showCleaned, exportCleaned
+        return x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, timeconvert_mode, timeconvert_format, trace_mode_id, averageMode, int(average_rollNum), cleanButton, showCleaned, exportCleaned, titles_all, suffixes_all
     except Exception as e:
         ui.critical('%s', e)
         ui.error('ERROR!! Cannot retrieve settings for plotting!')
@@ -313,7 +367,7 @@ def press(btn):
         try:
             ifile2 = ui.getEntry('file')
             df_inputfile = pTS.inputFiletoDF(ifile2)
-            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num, data_clean, show_clean, save_clean = loadPlotSettings()
+            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num, data_clean, show_clean, save_clean, titles_all, suffixes_all = loadPlotSettings()
             if data_clean == 'On':
                 check_columns = []
                 check_columns.extend(x_items)
@@ -355,7 +409,7 @@ def press(btn):
                 except Exception as e:
                     ui.critical('%s', e)
                     ui.error('ERROR!! Cannot create dictionary for plotting!!!')
-            pTS.createFig(sec_y, plotDict, df2[x_items[0]], df2, ['', '', '', ''], ['', '', ''])
+            pTS.createFig(sec_y, plotDict, df2[x_items[0]], df2, titles_all, suffixes_all)
             ui.info('Plotting figure completed!')
             ui.queueFunction(ui.setLabel, 'output', 'Plotting figure completed!')
             ui.queueFunction(ui.setLabelBg, 'output', 'green')
@@ -395,7 +449,7 @@ def press(btn):
         try:
             ifile2 = ui.getEntry('file')
             df_inputfile = pTS.inputFiletoDF(ifile2)
-            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num, data_clean, show_clean, save_clean = loadPlotSettings()
+            x_items, y_items, y_keyList, y2_items, y2_keyList, sec_y, time_mode, time_format, trace_mode_id, averageMode, average_Num, data_clean, show_clean, save_clean, titles_all, suffixes_all = loadPlotSettings()
             if data_clean == 'On':
                 check_columns = []
                 check_columns.extend(x_items)
@@ -437,7 +491,7 @@ def press(btn):
                 except Exception as e:
                     ui.critical('%s', e)
                     ui.error('ERROR!! Cannot create dictionary for plotting!!!')
-            pTS.saveFigAsHTML(sec_y, plotDict, df2[x_items[0]], df2, os.path.join(save_location, HTML_name), ['', '', '', ''], ['', '', ''])
+            pTS.saveFigAsHTML(sec_y, plotDict, df2[x_items[0]], df2, os.path.join(save_location, HTML_name), titles_all, suffixes_all)
             ui.info('Saving figure as HTML completed!')
             ui.queueFunction(ui.setLabel, 'output', 'Saving figure as HTML completed!')
             ui.queueFunction(ui.setLabelBg, 'output', 'green')
@@ -637,13 +691,13 @@ ui.startFrame('Axis_options_1', row=6, column=0, colspan=2)
 ui.addLabelEntry('Title:')
 ui.stopFrame()
 ui.startFrame('Axis_options_2', row=6, column=2, colspan=2)
-ui.addLabelEntry('X-Axis Title:')
+ui.addLabelEntry('X-Axis title:')
 ui.stopFrame()
 ui.startFrame('Axis_options_3', row=7, column=0, colspan=2)
-ui.addLabelEntry('Y-Axis Title:')
+ui.addLabelEntry('Y-Axis title:')
 ui.stopFrame()
 ui.startFrame('Axis_options_4', row=7, column=2, colspan=2)
-ui.addLabelEntry('Y2-Axis Title:')
+ui.addLabelEntry('Y2-Axis title:')
 ui.stopFrame()
 ui.stopLabelFrame()
 ui.startLabelFrame('Tick suffixes (units)')
@@ -676,7 +730,6 @@ ui.stopTabbedFrame() #END tabbing
 ui.startFrame('Bottom', row=3, column=0, colspan=3)
 ui.setBg('ghost white')
 
-#TODO add title & suffix presets
 #importing presets OR creating default preset file if missing
 config = ConfigParser(strict=False, interpolation=None)#interpolation none to avoid interpolation error from datetime format
 presetNameValues = []
@@ -713,7 +766,15 @@ else:
         'avg_rollnum': '',
         'datacleaning_on': '',
         'datacleaning_show': '',
-        'datacleaning_export': ''
+        'datacleaning_export': '',
+        'title': '',
+        'x-axis-title':'',
+        'y-axis-title':'',
+        'y2-axis-title':'',
+        'x-axis-suffix':'',
+        'y-axis-suffix':'',
+        'y2-axis-suffix':''
+
     }
     config['preset2'] = {
         'id': 2,
@@ -728,7 +789,14 @@ else:
         'avg_rollnum': '',
         'datacleaning_on': '',
         'datacleaning_show': '',
-        'datacleaning_export': ''
+        'datacleaning_export': '',
+        'title': '',
+        'x-axis-title':'',
+        'y-axis-title':'',
+        'y2-axis-title':'',
+        'x-axis-suffix':'',
+        'y-axis-suffix':'',
+        'y2-axis-suffix':''
     }
     config['preset3'] = {
         'id': 3,
@@ -743,7 +811,14 @@ else:
         'avg_rollnum': '',
         'datacleaning_on': '',
         'datacleaning_show': '',
-        'datacleaning_export': ''
+        'datacleaning_export': '',
+        'title': '',
+        'x-axis-title':'',
+        'y-axis-title':'',
+        'y2-axis-title':'',
+        'x-axis-suffix':'',
+        'y-axis-suffix':'',
+        'y2-axis-suffix':''
     }
     config['preset4'] = {
         'id': 4,
@@ -758,7 +833,14 @@ else:
         'avg_rollnum': '',
         'datacleaning_on': '',
         'datacleaning_show': '',
-        'datacleaning_export': ''
+        'datacleaning_export': '',
+        'title': '',
+        'x-axis-title':'',
+        'y-axis-title':'',
+        'y2-axis-title':'',
+        'x-axis-suffix':'',
+        'y-axis-suffix':'',
+        'y2-axis-suffix':''
     }
     config['preset5'] = {
         'id': 5,
@@ -773,7 +855,14 @@ else:
         'avg_rollnum': '',
         'datacleaning_on': '',
         'datacleaning_show': '',
-        'datacleaning_export': ''
+        'datacleaning_export': '',
+        'title': '',
+        'x-axis-title':'',
+        'y-axis-title':'',
+        'y2-axis-title':'',
+        'x-axis-suffix':'',
+        'y-axis-suffix':'',
+        'y2-axis-suffix':''
     }
     config['preset6'] = {
         'id': 6,
@@ -788,7 +877,14 @@ else:
         'avg_rollnum': '',
         'datacleaning_on': '',
         'datacleaning_show': '',
-        'datacleaning_export': ''
+        'datacleaning_export': '',
+        'title': '',
+        'x-axis-title':'',
+        'y-axis-title':'',
+        'y2-axis-title':'',
+        'x-axis-suffix':'',
+        'y-axis-suffix':'',
+        'y2-axis-suffix':''
     }
 
     with open('presets.ini', 'w', encoding='utf-8') as config_file:
