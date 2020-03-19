@@ -64,7 +64,7 @@ Select wanted X-axis and Y-axis and/or Y2-axis (use **Shift** and **Ctrl** to se
 Press Plot
 
 #### Save plot as HTML
-You need to have pTS_GUI.py running
+You need to have plotTS_GUI.py running
 
 Give a file location by dragging and dropping to the "blue" area or select by pressing 'File'
 
@@ -152,7 +152,7 @@ You should be able to see the saved preset with the inputted name in the presets
 All the settings and axis elements should be now loaded and you are ready to plot or save as HTML
 
 **In case of issues**
-If for some reason you get errors using the presets you can see if you can fix the presets file by editing it with notepad++ or start fresh by simply deleting the presets.ini, if the pTS_GUI is started without presets.ini existing, it will create a new blank presets file
+If for some reason you get errors using the presets you can see if you can fix the presets file by editing it with notepad++ or start fresh by simply deleting the presets.ini, if the plotTS_GUI is started without presets.ini existing, it will create a new blank presets file
 
 ### plotTS.py independent usage
 Run plotTS.py independently (mainly for learning, so others can learn to use the main libraries such as pandas and plotly by themselves)
