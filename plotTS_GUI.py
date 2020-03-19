@@ -4,6 +4,7 @@ import logging
 import sys
 import plotTS as pTS
 from configparser import ConfigParser
+from tabulate import tabulate
 
 version = '1.4.0'
 print("\nplotTS {}\n".format(version))
@@ -358,7 +359,6 @@ def externalDrop(data):
     ui.info('Data drop used: %s', ofile)
     ui.setEntry('file', ofile, callFunction=True)
 
-#TODO add title & suffixes data
 #button press actions
 def press(btn):
     ui.info('User pressed --> %s', btn)
@@ -377,7 +377,7 @@ def press(btn):
                 df_inputfile = df_cleaned
                 if show_clean == True:
                     df_drop_first_ten = df_drop.head(10)
-                    drop_str = df_drop_first_ten.to_string()
+                    drop_str = tabulate(df_drop_first_ten, headers='keys', tablefmt='psql')
                     drop_rowcount = str(len(df_drop.index))
                     ui.infoBox('Dropped rows!!', 'Number of rows dropped: {}\n\nShowing first 10 dropped rows:\n{}\n...'.format(drop_rowcount, drop_str), parent=None)                  
             if time_mode == 'Auto':
@@ -459,7 +459,7 @@ def press(btn):
                 df_inputfile = df_cleaned
                 if show_clean == True:
                     df_drop_first_ten = df_drop.head(10)
-                    drop_str = df_drop_first_ten.to_string()
+                    drop_str = tabulate(df_drop_first_ten, headers='keys', tablefmt='psql')
                     drop_rowcount = str(len(df_drop.index))
                     ui.infoBox('Dropped rows!!', 'Number of rows dropped: {}\n\nShowing first 10 dropped rows:\n{}\n...'.format(drop_rowcount, drop_str), parent=None)
             if time_mode == 'Auto':

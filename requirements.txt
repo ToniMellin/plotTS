@@ -2,3 +2,4 @@ pandas==0.25.3
 appJar==0.94.0
 plotly==4.4.1
 numpy==1.18.1
+tabulate==0.8.6
