@@ -1,7 +1,7 @@
 # plotTS
 Easy plotting GUI to use plotly in creating plots from data files (.csv or .xlsx)
 
-![image](https://user-images.githubusercontent.com/55407190/72760590-fc03a880-3be1-11ea-8c43-d6b72c1104f2.png)
+![image](https://user-images.githubusercontent.com/55407190/77053852-9eb88780-69d7-11ea-8358-af7c35a03798.png)
 
 ![example](https://user-images.githubusercontent.com/55407190/71592026-417b0b80-2b37-11ea-97d3-f90072f71c21.png)
 
@@ -14,9 +14,15 @@ Install needed libraries to python 3.7 with pip:
 ```
 pip install -r requirements.txt
 ```
-*Optionally you can use an .exe version to run without having python or libraries installed. Check release 1.3.0 exe version to do so.
+*Optionally you can use an .exe version to run without having python or libraries installed. Check release 1.3.0 exe version or later to do so.
 
 ## Features
+
+### 1.4.0
+- Possibility to drop data rows that have empty-values or NaN values (only effects columns selected to be used in plotting)
+- Option to show pop-up listing of dropped rows
+- Option to save a "cleaned" copy of input file without removed rows
+- Possibility to add titles and suffixes (units) to axis
 
 ### 1.3.0 / 1.3.1
 - Save plot as HTML file location selection
@@ -47,7 +53,7 @@ pip install -r requirements.txt
 ### GUI usage
 
 #### Basic usage
-Start using by running pTS_GUI.py
+Start using by running plotTS_GUI.py (before 1.4.0 it used to be pTS_GUI.py)
 
 Give a file location by dragging and dropping to the "blue" area or select by pressing 'File'
 
@@ -58,7 +64,7 @@ Select wanted X-axis and Y-axis and/or Y2-axis (use **Shift** and **Ctrl** to se
 Press Plot
 
 #### Save plot as HTML
-You need to have pTS_GUI.py running
+You need to have plotTS_GUI.py running
 
 Give a file location by dragging and dropping to the "blue" area or select by pressing 'File'
 
@@ -74,6 +80,8 @@ Press Save As HTML
 
 #### Settings
 Go to settings tab
+
+![image](https://user-images.githubusercontent.com/55407190/77054059-ed662180-69d7-11ea-849f-6b032386eafc.png)
 
 Select any wanted options:
 - Convert x-axis time to datetime (will try to convert selected x-axis)
@@ -144,7 +152,7 @@ You should be able to see the saved preset with the inputted name in the presets
 All the settings and axis elements should be now loaded and you are ready to plot or save as HTML
 
 **In case of issues**
-If for some reason you get errors using the presets you can see if you can fix the presets file by editing it with notepad++ or start fresh by simply deleting the presets.ini, if the pTS_GUI is started without presets.ini existing, it will create a new blank presets file
+If for some reason you get errors using the presets you can see if you can fix the presets file by editing it with notepad++ or start fresh by simply deleting the presets.ini, if the plotTS_GUI is started without presets.ini existing, it will create a new blank presets file
 
 ### plotTS.py independent usage
 Run plotTS.py independently (mainly for learning, so others can learn to use the main libraries such as pandas and plotly by themselves)

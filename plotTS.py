@@ -117,6 +117,25 @@ def addAverageData(df, y_List, y2_List, average_rollNum):
         pTS_logger.critical('%s', e)
         pTS_logger.exception('Issue averaging data')
     
+#data cleaning function, to remove empty-valued or NaN valued rows, outputs cleaned dataframe and dataframe of cleaned rows
+def cleanData(df, columns_list, show_dropped_ON, export_ON, inputfilepath):
+    
+    #Clean out rows with empty or NaN values in given columns
+    df_clean = df.dropna(subset=columns_list)
+    
+    if show_dropped_ON == True:
+        df_dropped = df.loc[pd.isnull(df[columns_list]).any(axis=1)]
+    else:
+        df_dropped = pd.DataFrame(index = ['Empty'])
+    if export_ON == True:
+        splitted_inputfile = inputfilepath.split('.')
+        if splitted_inputfile[1] == "csv":
+            df_clean.to_csv(index=False, path_or_buf='{}_clean.csv'.format(splitted_inputfile[0]))
+        else:
+            df_clean.to_excel(index=False, path_or_buf='{}_clean.xlsx'.format(inputfilepath[0]))
+
+    return df_clean, df_dropped
+
 
 #creates the dictionary key for plotEngine to use as figure building instructions
 def createPlotDict(df, y_keys, y2_keys, trace_mode_id):
@@ -162,7 +181,7 @@ def plotEngine(fig, plotDict, X_axis, df):
                                         name=pName),secondary_y=True,)
 
 #createFig creates a figure from the data and displays the figure
-def createFig(sec_y, plotDict, x_axis, df):
+def createFig(sec_y, plotDict, x_axis, df, titles, suffixes):
     #debug messages before plotting
     pTS_logger.debug('plotting dataframe...')
     pTS_logger.debug('dataframe dtypes: \n%s', df.dtypes)
@@ -171,12 +190,23 @@ def createFig(sec_y, plotDict, x_axis, df):
     fig = make_subplots(specs=[[{"secondary_y": sec_y}]])
 
     plotEngine(fig, plotDict, x_axis, df)
+
+    fig.update_layout(
+                        showlegend=True,
+                        title=titles[0],
+                        title_x=0.5,
+                        xaxis_title=titles[1],
+                        yaxis_title=titles[2],
+                        xaxis_ticksuffix=suffixes[0],
+                        yaxis_ticksuffix=suffixes[1])
+
+    fig.update_yaxes(title_text=titles[3], ticksuffix=suffixes[2], secondary_y=True)
 
     fig.show()
     pTS_logger.debug('Showing plot')
 
 #saveFigAsHTML works the same as createFig, except it produces a HTML file with all the data plotted
-def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name_path):
+def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name_path, titles, suffixes):
     #debug messages before plotting
     pTS_logger.debug('plotting dataframe...')
     pTS_logger.debug('dataframe dtypes: \n%s', df.dtypes)
@@ -185,6 +215,17 @@ def saveFigAsHTML(sec_y, plotDict, x_axis, df, HTML_name_path):
     fig = make_subplots(specs=[[{"secondary_y": sec_y}]])
 
     plotEngine(fig, plotDict, x_axis, df)
+
+    fig.update_layout(
+                        showlegend=True,
+                        title=titles[0],
+                        title_x=0.5,
+                        xaxis_title=titles[1],
+                        yaxis_title=titles[2],
+                        xaxis_ticksuffix=suffixes[0],
+                        yaxis_ticksuffix=suffixes[1])
+
+    fig.update_yaxes(title_text=titles[3], ticksuffix=suffixes[2], secondary_y=True)
 
     fig.write_html('{}.html'.format(HTML_name_path))
     pTS_logger.debug('Saved HTML file: %s', HTML_name_path)
@@ -248,7 +289,7 @@ if __name__ == "__main__":
     plotDictionary = createPlotDict(df_file_with_averages, ['Parabola', 'Random', 'Random_avg=5'], [ 'Sine', 'Sine_avg=5'], 2)
 
     #creating the figure and plotting the data by using the 'Time' as x-axis
-    createFig(True, plotDictionary, df_file_with_averages['Time'], df_file_with_averages)
+    createFig(True, plotDictionary, df_file_with_averages['Time'], df_file_with_averages, ['', '', '', ''], ['', '', ''])
 
     #saving the figure as html by using the 'index' as x-axis
-    saveFigAsHTML(True, plotDictionary, df_file_with_averages['index'], df_file_with_averages, 'save_example')
+    saveFigAsHTML(True, plotDictionary, df_file_with_averages['index'], df_file_with_averages, 'save_example', ['', '', '', ''], ['', '', ''])
