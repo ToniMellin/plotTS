@@ -126,6 +126,7 @@ def changePresetValues(oldName, newName):
         ui.queueFunction(ui.setLabel, 'output', 'ERROR saving preset {}!!! Possible that presets.ini corrupted!!!'.format(newName))
         ui.queueFunction(ui.setLabelBg, 'output', 'red')
 
+#TODO remove this pre-check or change it to checking how many was able to get set from preset
 #check if preset is empty
 def checkIfPresetDataEmpty(presetSec):
     dataCount = 0

@@ -17,6 +17,9 @@ pip install -r requirements.txt
 *Optionally you can use an .exe version to run without having python or libraries installed. Check release 1.3.0 exe version or later to do so.
 
 ## Features
+### 1.4.1
+- Removed presets pre-checking for matching axis values (now presets just tries match the preset the best it can)
+- Fixed opening .xlsx files
 
 ### 1.4.0
 - Possibility to drop data rows that have empty-values or NaN values (only effects columns selected to be used in plotting)

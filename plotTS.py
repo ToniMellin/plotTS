@@ -8,6 +8,7 @@ import sys
 from datetime import datetime
 from datetime import timedelta
 import re
+import xlrd
 
 #name the module logger
 pTS_logger = logging.getLogger(__name__)
