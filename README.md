@@ -100,6 +100,10 @@ Select any wanted options:
 - Add Averaging Curves (rolling average)
   - On: Adds new additional average curves for all selected Y and Y2 axis elements based on selected rolling average number
   - Off: Feature off
+- Clean out empty and NaN data rows
+  - Can be selected to be turned on/off, basically removing rows of data that have empty or NaN values in the elements selected to be plotted
+  - A pop-up of the first 10 removed rows can be shown if the option is selected
+  - A copy of the file with rows removed can be saved by selecting the option
 - Titles
   - Adds titles to the plot in specified positions (title, x-axis title, y-axis title, y2-axis title)
 - Tick suffixes (units)
