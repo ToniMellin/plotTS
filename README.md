@@ -137,6 +137,10 @@ If none of them are a match it will still try a non date time conversion, which 
 #### Presets
 Presets can save your selected axis elements and also the settings to reduce needing to redo these actions on files that are formatted exactly the same, making plotting of frequently replicated files easy
 
+Presets will look for the exact same axis element names and if it cannot match all the elements saved in the preset, it will count how many were matched
+
+Note that also all the settings are included in the preset, so for example plotting traces and titles will also be loaded
+
 You can also share presets you made to others by copying your presets.ini and others replacing theirs with that one
 
 **Save Settings:**
@@ -173,4 +177,3 @@ ploTS.py will run as main and execute the examples
 it will create exampledata.csv and plot that, as well as save_example.html
 
 Edit and explore how plotly works and how pandas is utilized!
-
