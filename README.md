@@ -17,6 +17,9 @@ pip install -r requirements.txt
 *Optionally you can use an .exe version to run without having python or libraries installed. Check release 1.3.0 exe version or later to do so.
 
 ## Features
+### 1.4.1
+- Removed presets pre-checking for matching axis values (now presets just tries match the preset the best it can, but shows counted matches for axis items if less than available in preset)
+- Fixed opening .xlsx files (new required library)
 
 ### 1.4.0
 - Possibility to drop data rows that have empty-values or NaN values (only effects columns selected to be used in plotting)
@@ -97,6 +100,14 @@ Select any wanted options:
 - Add Averaging Curves (rolling average)
   - On: Adds new additional average curves for all selected Y and Y2 axis elements based on selected rolling average number
   - Off: Feature off
+- Clean out empty and NaN data rows
+  - Can be selected to be turned on/off, basically removing rows of data that have empty or NaN values in the elements selected to be plotted
+  - A pop-up of the first 10 removed rows can be shown if the option is selected
+  - A copy of the file with rows removed can be saved by selecting the option
+- Titles
+  - Adds titles to the plot in specified positions (title, x-axis title, y-axis title, y2-axis title)
+- Tick suffixes (units)
+  - Adds suffixes (units) after the specified axis items (x-axis, y-axis, y2-axis)
 
 **Auto Time Formats**
 The **Auto** option for x-axis time goes through the below datetime formats:
@@ -127,10 +138,12 @@ If none of them are a match it will still try a non date time conversion, which 
 - 123:22 *(123 hours, 22 minutes)*
 - 23:22 *(23 hours, 22 minutes)*
 
-
-
 #### Presets
 Presets can save your selected axis elements and also the settings to reduce needing to redo these actions on files that are formatted exactly the same, making plotting of frequently replicated files easy
+
+Presets will look for the exact same axis element names and if it cannot match all the elements saved in the preset, it will count how many were matched
+
+Note that also all the settings are included in the preset, so for example plotting traces and titles will also be loaded
 
 You can also share presets you made to others by copying your presets.ini and others replacing theirs with that one
 
@@ -152,7 +165,13 @@ You should be able to see the saved preset with the inputted name in the presets
 All the settings and axis elements should be now loaded and you are ready to plot or save as HTML
 
 **In case of issues**
-If for some reason you get errors using the presets you can see if you can fix the presets file by editing it with notepad++ or start fresh by simply deleting the presets.ini, if the plotTS_GUI is started without presets.ini existing, it will create a new blank presets file
+- If for some reason you get errors using the presets you can see if you can fix the presets file by editing it with notepad++ or start fresh by simply deleting the presets.ini, if the plotTS_GUI is started without presets.ini existing, it will create a new blank presets file
+- If you get only some or none of your axis items selected through preset settings, check your column item names for special characters and especially for commas ',' as the items are run as list and thus any commas will create a split item that it is trying to match with
+
+#### Debug
+If you have issues while using the GUI you can navigate to About page and press Debug ON, which will create a debug.log file in the folder containing the program source files. 
+
+The debug.log might help you figure out why something isn't working or at least might help the developer to fix a possible bug.
 
 ### plotTS.py independent usage
 Run plotTS.py independently (mainly for learning, so others can learn to use the main libraries such as pandas and plotly by themselves)
@@ -162,4 +181,3 @@ ploTS.py will run as main and execute the examples
 it will create exampledata.csv and plot that, as well as save_example.html
 
 Edit and explore how plotly works and how pandas is utilized!
-

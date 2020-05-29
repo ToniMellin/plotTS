@@ -6,7 +6,7 @@ import plotTS as pTS
 from configparser import ConfigParser
 from tabulate import tabulate
 
-version = '1.4.0'
+version = '1.4.1'
 print("\nplotTS {}\n".format(version))
 
 #logging configuration
@@ -128,15 +128,11 @@ def changePresetValues(oldName, newName):
 
 #check if preset is empty
 def checkIfPresetDataEmpty(presetSec):
-    dataCount = 0
-    if config[presetSec].get('x_axis'):
-        dataCount += 1
-    if config[presetSec].get('y_axis'):
-        dataCount += 1
-    if config[presetSec].get('y2_axis'):
-        dataCount += 1
-    ui.debug('preset dataCount is %s', dataCount)
-    if dataCount == 0:
+    emptyCount = 0
+    if config[presetSec].get('timeconvert_mode'):
+        emptyCount += 1
+    ui.debug('preset emptyCount is %s', emptyCount)
+    if emptyCount == 0:
         return True
     else:
         return False
@@ -149,7 +145,7 @@ def str2bool(v):
 def loadPresetSettings(presetName):
     preset_id = int(findPresetID(presetName))
     presetSec = presetSectionValues[preset_id-1]
-    #check preset for emptydata
+    #check preset for emptydata by checking timeconvert_mode
     presetEmpty = checkIfPresetDataEmpty(presetSec)
     if presetEmpty == True:
         ui.error('Preset load failed!!... Preset has no values...')
@@ -159,11 +155,26 @@ def loadPresetSettings(presetName):
     #load axis settings from preset
     x_items = config[presetSec].get('x_axis')
     x_itemsList = x_items.split(',')
+    if len(x_itemsList) == 1 and x_itemsList[0] == '':
+        x_items_count = 0
+    else:
+        x_items_count = len(x_itemsList)
     y_items = config[presetSec].get('y_axis')
     y_itemsList = y_items.split(',')
+    if len(y_itemsList) == 1 and y_itemsList[0] == '':
+        y_items_count = 0
+    else:
+        y_items_count = len(y_itemsList)
     y2_items = config[presetSec].get('y2_axis')
     y2_itemsList = y2_items.split(',')
+    if len(y2_itemsList) == 1 and y2_itemsList[0] == '':
+        y2_items_count = 0
+    else:
+        y2_items_count = len(y2_itemsList)
+    preset_axis_count = x_items_count + y_items_count + y2_items_count
     #check to see if matches found from the loaded file
+    ui.debug('Preset x_items: %(x_i)s, y_items: %(y_i)s, y2_items: %(y2_i)s', {'x_i': str(x_itemsList), 'y_i': str(y_itemsList), 'y2_i': str(y2_itemsList)} )
+    ui.debug('Preset x_items count: %(x_i)s, y_items count: %(y_i)s, y2_items count: %(y2_i)s', {'x_i': str(len(x_itemsList)), 'y_i': str(len(y_itemsList)), 'y2_i': str(len(y2_itemsList))} )
     listItems = ui.getAllListItems('X-Axis')
     ui.debug('listItems: %s', listItems)
     xCount = 0
@@ -181,15 +192,12 @@ def loadPresetSettings(presetName):
         for item in listItems:
             if y2_item == item:
                 y2Count+=1
-    ui.debug('Preset xCount = %(x_C)s, yCount = %(y_C)s and y2Count = %(y2_C)s', {'x_C': str(xCount), 'y_C': str(yCount), 'y2_C': str(y2Count)})
+    axis_count = xCount + yCount + y2Count
+    ui.debug('Preset xCount = %(x_C)s out of %(xC)s, yCount = %(y_C)s out of %(yC)s, y2Count = %(y2_C)s out of %(y2C)s', {'x_C': str(xCount), 'xC': str(x_items_count), 'y_C': str(yCount), 'yC': str(y_items_count), 'y2_C': str(y2Count), 'y2C': str(y2_items_count)})
     #stop loading if no matches in the 
     if listItems == []:
         ui.error('No file loaded!!... Cannot match againts presets lists...')
         ui.queueFunction(ui.setLabel, 'output', 'No file loaded!!... Cannot Load Preset!!!')
-        ui.queueFunction(ui.setLabelBg, 'output', 'red')
-    elif xCount == 0 and yCount == 0 and y2Count == 0:
-        ui.error('Preset load failed!!... No matches to Axis lists...')
-        ui.queueFunction(ui.setLabel, 'output', 'Preset {} does not match file!!!'.format(presetName))
         ui.queueFunction(ui.setLabelBg, 'output', 'red')
     else:
         try:
@@ -265,9 +273,17 @@ def loadPresetSettings(presetName):
             ui.setEntry("Y2-Axis suffix:", y2_axis_suffix_set, callFunction=True)
             ui.debug('y2-axis suffix set to %s', y2_axis_suffix_set)
             #set outputs after loading all settings
-            ui.info('Preset %(pres)s loaded as %(name)s', {'pres': presetSec, 'name': presetName})
-            ui.queueFunction(ui.setLabel, 'output', 'Loaded preset: {}'.format(presetName))
-            ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
+            #output if not the same amount of axis items loaded as in presets
+            if preset_axis_count != axis_count:
+                ui.info('Preset %(pres)s loaded as %(name)s', {'pres': presetSec, 'name': presetName})
+                ui.info('Preset axis match count %(aCount)s / %(paCount)s', {'aCount': axis_count, 'paCount': preset_axis_count})
+                ui.queueFunction(ui.setLabel, 'output', 'Loaded preset: {}; Axis item matches: {}/{}'.format(presetName, axis_count, preset_axis_count))
+                ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
+            #default preset loaded message
+            else:
+                ui.info('Preset %(pres)s loaded as %(name)s', {'pres': presetSec, 'name': presetName})
+                ui.queueFunction(ui.setLabel, 'output', 'Loaded preset: {}'.format(presetName))
+                ui.queueFunction(ui.setLabelBg, 'output', 'yellow')
         except Exception as e:
             ui.critical('%s', e)
             ui.error('Issue setting axis items')
