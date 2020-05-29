@@ -128,11 +128,11 @@ def changePresetValues(oldName, newName):
 
 #check if preset is empty
 def checkIfPresetDataEmpty(presetSec):
-    dataCount = 0
+    emptyCount = 0
     if config[presetSec].get('timeconvert_mode'):
-        dataCount += 1
-    ui.debug('preset dataCount is %s', dataCount)
-    if dataCount == 0:
+        emptyCount += 1
+    ui.debug('preset emptyCount is %s', emptyCount)
+    if emptyCount == 0:
         return True
     else:
         return False
@@ -155,15 +155,26 @@ def loadPresetSettings(presetName):
     #load axis settings from preset
     x_items = config[presetSec].get('x_axis')
     x_itemsList = x_items.split(',')
-    x_items_count = len(x_itemsList)
+    if len(x_itemsList) == 1 and x_itemsList[0] == '':
+        x_items_count = 0
+    else:
+        x_items_count = len(x_itemsList)
     y_items = config[presetSec].get('y_axis')
     y_itemsList = y_items.split(',')
-    y_items_count = len(y_itemsList)
+    if len(y_itemsList) == 1 and y_itemsList[0] == '':
+        y_items_count = 0
+    else:
+        y_items_count = len(y_itemsList)
     y2_items = config[presetSec].get('y2_axis')
     y2_itemsList = y2_items.split(',')
-    y2_items_count = len(y2_itemsList)
+    if len(y2_itemsList) == 1 and y2_itemsList[0] == '':
+        y2_items_count = 0
+    else:
+        y2_items_count = len(y2_itemsList)
     preset_axis_count = x_items_count + y_items_count + y2_items_count
     #check to see if matches found from the loaded file
+    ui.debug('Preset x_items: %(x_i)s, y_items: %(y_i)s, y2_items: %(y2_i)s', {'x_i': str(x_itemsList), 'y_i': str(y_itemsList), 'y2_i': str(y2_itemsList)} )
+    ui.debug('Preset x_items count: %(x_i)s, y_items count: %(y_i)s, y2_items count: %(y2_i)s', {'x_i': str(len(x_itemsList)), 'y_i': str(len(y_itemsList)), 'y2_i': str(len(y2_itemsList))} )
     listItems = ui.getAllListItems('X-Axis')
     ui.debug('listItems: %s', listItems)
     xCount = 0
